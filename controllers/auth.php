@@ -1,15 +1,19 @@
 <?php
 session_start();
-$users = require '../includes/users.php';
+
+use authentication as auth;
+
+$users = auth\getAllUsers();
 
 $email = $_POST['email'] ?? '';
 $email = $_POST['password'] ?? '';
 
+// ! FOR NOW CAN BE LIKE THIS, BUT AFTER THE DATABASE, THINGS WILL CHANGE
 foreach ($users as $user) {
     if ($user->checkCredentials($email, $password)) {
         $_SESSION['user'] = [
-            'email' => $user->email,
-            'role' => $user->role
+            'email' => $user->getEmail(),
+            'role' => $user->getRole()
         ];
         header('Location: ../views/dashboard.php');
         exit();
