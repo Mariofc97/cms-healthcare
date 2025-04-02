@@ -1,7 +1,7 @@
 <?php
-$request = trim($_SERVER["PATH_INFO"], "/") ?? "";
+$requestUri = trim($_SERVER["PATH_INFO"], "/") ?? "";
 
-$requestSegments = explode("/", $request);
+$requestSegments = explode("/", $requestUri);
 $resource = strtolower($requestSegments[0]);
 
 try {

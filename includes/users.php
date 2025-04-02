@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace authentication;
 
+use models\User;
+
+
 function getAllUsers()
 {
     return [

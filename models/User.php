@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace authentication;
+namespace models;
 
 use DateTime;
 
-class User
+interface AppItem {};
+
+class User implements AppItem
 {
     private int $id;
     private string $name;
