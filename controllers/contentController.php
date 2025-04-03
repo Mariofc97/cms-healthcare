@@ -3,14 +3,14 @@
 use models\AppItem;
 use models\User;
 
-interface ApplicationDAO
+interface ApplicationController
 {
     public function getById(int $id): AppItem;
     public function getAll(): array;
     public function newRecord(AppItem $newRecord): bool;
 }
 
-class UserDAO implements ApplicationDAO
+class UserController implements ApplicationController
 {
     public function getById(int $id): AppItem
     {
@@ -32,7 +32,7 @@ class UserDAO implements ApplicationDAO
     }
 }
 
-class AppointmentDAO implements ApplicationDAO
+class AppointmentController implements ApplicationController
 {
     public function getById(int $id): AppItem
     {
