@@ -1,6 +1,6 @@
 <?php
 
 define("DB_SERVER", "localhost");
-define("DB_USERNAME", "root");
-define("DB_PASS", "");
+define("DB_USERNAME", "phpAgent");
+define("DB_PASS", "test1234");
 define("DB_NAME", "healthcare_cms");

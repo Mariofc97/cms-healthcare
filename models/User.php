@@ -10,21 +10,23 @@ interface AppItem {};
 
 class User implements AppItem
 {
-    private int $id;
-    private string $name;
-    private string $phone;
-    private string $email;
-    private string $password;
-    private int $role;
+    protected int $id;
+    protected string $fname;
+    protected string $lname;
+    protected string $phone;
+    protected string $email;
+    protected string $password;
+    protected int $role;
 
     public const PATIENT = 1;
     public const DOCTOR = 2;
     public const STAFF = 3;
 
-    public function __construct(int $id, string $name, string $phone, string $email, string $password, int $role)
+    public function __construct(int $id, string $fname, string $lname, string $phone, string $email, string $password, int $role)
     {
         $this->id = $id;
-        $this->name = $name;
+        $this->fname = $fname;
+        $this->lname = $lname;
         $this->phone = $phone;
         $this->email = $email;
         $this->password = $password;
@@ -44,12 +46,29 @@ class User implements AppItem
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->fname. " ". $this->lname;
     }
 
-    public function setName(string $name): void
+    public function getFname(): string {
+        return $this->fname;
+    }
+
+    public function setFname(string $fname): void {
+        $this->fname = $fname;
+    }
+
+    public function getLname(): string {
+        return $this->lname;
+    }
+
+    public function setLname(string $lname): void {
+        $this->lname = $lname;
+    }
+
+    public function setName(string $fname,string $lname,): void
     {
-        $this->name = $name;
+        $this->fname = $fname;
+        $this->lname = $lname;
         // TODO: CHANGE NAME IN DATABASE
     }
 
@@ -190,28 +209,5 @@ final class Doctor extends User
 
 final class Staff extends User
 {
-    private string $position;
 
-    public function __construct(
-        int $id,
-        string $name,
-        string $phone,
-        string $email,
-        string $password,
-        string $position
-    ) {
-        parent::__construct($id, $name, $phone, $email, $password, User::STAFF);
-        $this->position = $position;
-    }
-
-    public function getPosition(): string
-    {
-        return $this->position;
-    }
-
-    public function setPosition(string $position): void
-    {
-        $this->position = $position;
-        // TODO: CHANGE POSITION IN DATABASE
-    }
 }

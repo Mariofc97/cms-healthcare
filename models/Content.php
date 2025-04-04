@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace models;
 
 use DateTime;
+use JsonSerializable;
 
 class Appointment implements AppItem
 {
@@ -118,17 +119,19 @@ class Condition implements AppItem
     }
 }
 
-class Diagnosis implements AppItem
+class Diagnosis implements AppItem, JsonSerializable
 {
     private int $id;
     private string $description;
     private int $apppointment;
+    private array $prescriptions;
 
-    public function __construct(int $id, string $description, int $apppointment)
+    public function __construct(int $id, string $description, int $apppointment, array $prescriptions = [])
     {
         $this->id = $id;
         $this->description = $description;
         $this->apppointment = $apppointment;
+        $this->prescriptions = $prescriptions;
     }
 
     public function getId(): int
@@ -159,6 +162,23 @@ class Diagnosis implements AppItem
     public function setApppointment(int $apppointment): void
     {
         $this->apppointment = $apppointment;
+    }
+
+    public function getPrescriptions(): array {
+        return $this->prescriptions;
+    }
+
+    public function setPrescriptions(array $prescriptions): void {
+        $this->prescriptions = $prescriptions;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'id' => $this->id,
+            'description' => $this->description,
+            'prescriptions' => $this->prescriptions
+        ];
     }
 }
 
