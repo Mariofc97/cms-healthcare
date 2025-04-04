@@ -11,12 +11,16 @@ class Appointment implements AppItem
     private int $id;
     private DateTime $datetime;
     private bool $status;
+    private int $condition;
+    private int $doctor;
 
-    public function __construct(int $id, DateTime $datetime, bool $status = false)
+    public function __construct(int $id, DateTime $datetime, int $condition, int $doctor, bool $status = false)
     {
         $this->id = $id;
         $this->datetime = $datetime;
         $this->status = $status;
+        $this->condition = $condition;
+        $this->doctor = $doctor;
     }
 
     public function getId(): int
@@ -47,6 +51,26 @@ class Appointment implements AppItem
     public function setStatus(bool $status): void
     {
         $this->status = $status;
+    }
+
+    public function getCondition(): int
+    {
+        return $this->condition;
+    }
+
+    public function setCondition(int $condition): void
+    {
+        $this->condition = $condition;
+    }
+
+    public function getDoctor(): int
+    {
+        return $this->doctor;
+    }
+
+    public function setDoctor(int $doctor): void
+    {
+        $this->doctor = $doctor;
     }
 }
 
