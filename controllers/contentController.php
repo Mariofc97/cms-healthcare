@@ -4,7 +4,7 @@ use models\AppItem;
 use models\Appointment;
 use models\User;
 
-include "../config/webConfig.php";
+require_once __DIR__ . "/../config/webConfig.php";
 
 class UserController
 {
@@ -54,15 +54,18 @@ class AppointmentController
 
     public function newRecord(Appointment $newRecord): bool
     {
-        $date = $newRecord->getDatetime()->getTimestamp();
+        $date = $newRecord->getDatetime()->format('Y-m-d H:i:s');
         $condition = $newRecord->getCondition();
         $doctor = $newRecord->getDoctor();
-        $sql = "INSERT INTO appointment(Appointment_Date, Condition_ID, Doctor_ID) VALUES ($date, $condition, $doctor)";
+        $sql = "INSERT INTO appointment(Appointment_Date, Condition_ID, Doctor_ID) VALUES (?, ?, ?)";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("sii", $date, $condition, $doctor);
 
-        if ($this->dbConnection->query($sql)) {
+        if ($stmt->execute()) {
             return true;
+        } else {
+            throw new Exception($this->dbConnection->error);
         }
-        return false;
     }
 
     public function updateRecord(AppItem $updatedItem): bool

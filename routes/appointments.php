@@ -1,5 +1,8 @@
 <?php
 
+require_once __DIR__ . '/../models/Content.php';
+require_once __DIR__ . '/../models/Audit.php';
+
 use audit\AuditGenerator;
 use audit\Outcome;
 use models\Appointment;
@@ -29,7 +32,7 @@ switch ($method) {
             AuditGenerator::genarateLog("root", "Create appointment", Outcome::SUCCESS);
         } catch (Exception $e) {
             AuditGenerator::genarateLog("root", "Create appointment", Outcome::ERROR);
-            throw new Exception("Error creating new appointment", 500);
+            throw new Exception("Error creating new appointment: " . $e->getMessage(), 500);
         }
         break;
     case "PUT":

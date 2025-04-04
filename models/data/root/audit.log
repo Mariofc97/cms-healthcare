@@ -1,0 +1,18 @@
+[2025-04-04 08:16:47] IP: ::1, Port: 50723
+Action: Create appointment, Outcome: Error
+[2025-04-04 08:18:22] IP: ::1, Port: 50750
+Action: Create appointment, Outcome: Error
+[2025-04-04 08:18:49] IP: ::1, Port: 50756
+Action: Create appointment, Outcome: Error
+[2025-04-04 08:20:00] IP: ::1, Port: 50807
+Action: Create appointment, Outcome: Error
+[2025-04-04 08:20:30] IP: ::1, Port: 50821
+Action: Create appointment, Outcome: Error
+[2025-04-04 08:22:35] IP: ::1, Port: 50859
+Action: Create appointment, Outcome: Error
+[2025-04-04 08:22:53] IP: ::1, Port: 50866
+Action: Create appointment, Outcome: Success
+[2025-04-04 08:26:00] IP: ::1, Port: 50967
+Action: Create appointment, Outcome: Success
+[2025-04-04 08:31:07] IP: ::1, Port: 51010
+Action: Create appointment, Outcome: Success

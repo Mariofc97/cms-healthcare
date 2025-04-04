@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace models;
 
+require_once __DIR__ . "/User.php";
+require_once __DIR__ . "/../controllers/contentController.php";
+
 use DateTime;
 
 class Appointment implements AppItem
