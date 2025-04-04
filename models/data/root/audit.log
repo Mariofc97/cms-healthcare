@@ -16,3 +16,25 @@ Action: Create appointment, Outcome: Success
 Action: Create appointment, Outcome: Success
 [2025-04-04 08:31:07] IP: ::1, Port: 51010
 Action: Create appointment, Outcome: Success
+[2025-04-04 08:33:47] IP: ::1, Port: 51058
+Action: Create appointment, Outcome: Success
+[2025-04-04 08:34:17] IP: ::1, Port: 51085
+Action: Create appointment, Outcome: Error
+[2025-04-04 18:13:16] IP: ::1, Port: 62261
+Action: Create appointment, Outcome: Success
+[2025-04-04 18:14:02] IP: ::1, Port: 62297
+Action: Create appointment, Outcome: Error
+[2025-04-04 19:49:32] IP: ::1, Port: 60908
+Action: Update appointment, Outcome: Success
+[2025-04-04 19:50:11] IP: ::1, Port: 62101
+Action: Update appointment, Outcome: Success
+[2025-04-04 19:58:05] IP: ::1, Port: 62188
+Action: Update appointment, Outcome: Error
+[2025-04-04 20:13:05] IP: ::1, Port: 62317
+Action: Update appointment, Outcome: Error
+[2025-04-04 20:13:15] IP: ::1, Port: 62323
+Action: Update appointment, Outcome: Success
+[2025-04-04 20:13:38] IP: ::1, Port: 62346
+Action: Update appointment, Outcome: Success
+[2025-04-04 20:15:39] IP: ::1, Port: 62379
+Action: Update appointment, Outcome: Success

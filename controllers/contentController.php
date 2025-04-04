@@ -42,9 +42,21 @@ class AppointmentController
         $this->dbConnection = new mysqli(DB_SERVER, DB_USERNAME, DB_PASS, DB_NAME);
     }
 
-    public function getById(int $id): AppItem
+    public function getById(int $id): Appointment
     {
-        return new User(1, "Steve Admin", "66678887", 'admin@example.com', '1234', User::STAFF);
+        $sql = "SELECT * FROM appointment WHERE Appointment_ID = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $id);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+        $result = $stmt->get_result();
+        $result = $result->fetch_assoc();
+
+        if ($result) {
+            return new Appointment($result["Appointment_ID"], new DateTime($result["Appointment_Date"]), $result["Condition_ID"], $result["Doctor_ID"], $result["Status"]);
+        } else throw new Exception("Appointment not found with ID $id");
     }
 
     public function getAll(): array
@@ -68,12 +80,24 @@ class AppointmentController
         }
     }
 
-    public function updateRecord(AppItem $updatedItem): bool
+    public function updateRecord(Appointment $updatedItem): bool
     {
-        return false;
+        $date = $updatedItem->getDatetime()->format('Y-m-d H:i:s');
+        $status = $updatedItem->getStatus();
+        $id = $updatedItem->getId();
+
+        $sql = "UPDATE appointment SET Appointment_DATE = ?, Status = ? WHERE Appointment_ID = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("sii", $date, $status, $id);
+
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            throw new Exception($this->dbConnection->error);
+        }
     }
 
-    public function __destruct()
+    function __destruct()
     {
         $this->dbConnection->close();
     }
