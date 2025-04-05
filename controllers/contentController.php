@@ -55,7 +55,7 @@ class PatientController extends ApplicationController
                 new DateTime($result["Birthdate"]),
                 $result["Address"]
             );
-        } else throw new Exception("Appointment not found with ID $id");
+        } else throw new Exception("Patient not found with ID $id");
     }
 
     public function getAll(int $id): array
@@ -223,14 +223,15 @@ class AppointmentController extends ApplicationController
     }
 }
 
-class CondtionController extends ApplicationController
+class ConditionController extends ApplicationController
 {
     public function getByPatient(int $patientId): array
     {
         $sql = "SELECT Condition_ID, StartDate FROM 
         pt_condition INNER JOIN patient
         ON pt_condition.Patient_ID = patient.Patient_ID
-        WHERE patient.Patient_ID = ?";
+        WHERE patient.Patient_ID = ?
+        ORDER BY pt_condition.StartDate ASC";
 
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bind_param("i", $patientId);

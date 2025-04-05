@@ -184,7 +184,7 @@ final class Patient extends User implements JsonSerializable
             "Fname" => $this->fname,
             "Lname" => $this->lname,
             "Gender" => ($this->gender === Gender::FEMALE) ? "F" : "M",
-            "Birthdate" => $this->birthdate,
+            "Birthdate" => $this->birthdate->format("Y-m-d"),
             "Phone" => $this->phone,
             "Email" => $this->email,
             "Address" => $this->address

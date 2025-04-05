@@ -26,7 +26,6 @@ switch ($method) {
         switch ($subResource) {
             case "medical-record":
                 $id = $_GET["patientID"];
-                $id = $_GET["patientID"];
                 if (!isset($id)) {
                     throw new Exception("Parameters missing", 400);
                 }
@@ -35,7 +34,7 @@ switch ($method) {
                 }
 
                 $patientController = new PatientController();
-                $conditionsController = new CondtionController();
+                $conditionsController = new ConditionController();
                 try {
                     $patient = $patientController->getById((int)$id);
                     $patientConditions = $conditionsController->getByPatient($patient->getId());
@@ -56,6 +55,30 @@ switch ($method) {
                 }
                 break;
             case "condition":
+                $id = $_GET["patientID"];
+                if (!isset($id)) {
+                    throw new Exception("Parameters missing", 400);
+                }
+                if (empty($id)) {
+                    throw new Exception("Parameters cannot be empty", 400);
+                }
+
+                $conditionController = new ConditionController();
+                try {
+                    $conditions = $conditionController->getByPatient((int)$id);
+                    $conditionsNum = count($conditions);
+                    if ($conditionsNum !== 0) {
+                        $latestCondition = $conditions[$conditionsNum - 1];
+                        $diagnosisController = new DiagnosisController();
+                        $latestCondition->setDiagnoses($diagnosisController->getByCondition($latestCondition->getId()));
+                        echo json_encode($latestCondition);
+                    } else {
+                        echo json_encode("Patient doesn't have any conditions");
+                    }
+                } catch (Exception $e) {
+                    AuditGenerator::genarateLog("root", "Get patient latest condition", Outcome::ERROR);
+                    throw new Exception("Error getting patient's latest condition: " . $e->getMessage(), 500);
+                }
                 break;
             case "appointments":
                 $id = $_GET["patientID"];

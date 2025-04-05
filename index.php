@@ -31,6 +31,6 @@ try {
             throw new Exception("Invalid resource $resource", 404);
     }
 } catch (Exception $e) {
-    echo $e->getMessage();
+    echo json_encode($e->getMessage());
     http_response_code($e->getCode());
 }
