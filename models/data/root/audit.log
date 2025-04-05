@@ -38,3 +38,15 @@ Action: Update appointment, Outcome: Success
 Action: Update appointment, Outcome: Success
 [2025-04-04 20:15:39] IP: ::1, Port: 62379
 Action: Update appointment, Outcome: Success
+[2025-04-05 00:32:18] IP: ::1, Port: 57149
+Action: Create patient, Outcome: Error
+[2025-04-05 00:34:15] IP: ::1, Port: 57177
+Action: Create patient, Outcome: Error
+[2025-04-05 00:34:34] IP: ::1, Port: 57201
+Action: Create patient, Outcome: Success
+[2025-04-05 00:34:58] IP: ::1, Port: 57205
+Action: Create patient, Outcome: Error
+[2025-04-05 00:35:44] IP: ::1, Port: 57214
+Action: Create patient, Outcome: Success
+[2025-04-05 02:38:06] IP: ::1, Port: 63462
+Action: Update appointment, Outcome: Success

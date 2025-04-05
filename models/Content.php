@@ -8,8 +8,9 @@ require_once __DIR__ . "/User.php";
 require_once __DIR__ . "/../controllers/contentController.php";
 
 use DateTime;
+use JsonSerializable;
 
-class Appointment implements AppItem
+class Appointment implements AppItem, JsonSerializable
 {
     private int $id;
     private DateTime $datetime;
@@ -74,6 +75,15 @@ class Appointment implements AppItem
     public function setDoctor(int $doctor): void
     {
         $this->doctor = $doctor;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            "Appointment_ID" => $this->id,
+            "Appointment_Date" => $this->datetime,
+            "Status" => $this->status
+        ];
     }
 }
 

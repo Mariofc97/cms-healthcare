@@ -2,15 +2,77 @@
 
 use models\AppItem;
 use models\Appointment;
+use models\Gender;
+use models\Patient;
+use models\Staff;
 use models\User;
 
 require_once __DIR__ . "/../config/webConfig.php";
 
-class UserController
+abstract class ApplicationController
 {
-    public function getById(int $id): AppItem
+    protected mysqli $dbConnection;
+
+    public function __construct()
     {
-        return new User(1, "Steve Admin", "66678887", 'admin@example.com', '1234', User::STAFF);
+        $this->dbConnection = new mysqli(DB_SERVER, DB_USERNAME, DB_PASS, DB_NAME);
+    }
+
+    public function __destruct()
+    {
+        $this->dbConnection->close();
+    }
+}
+
+class PatientController extends ApplicationController
+{
+    public function getById(int $id): Patient
+    {
+        return new Patient(1, "Steve", "Admin", "66678887", 'admin@example.com', '1234', Gender::MALE, new DateTime('2025-08-20'), "dasd");
+    }
+
+    public function getAll(int $id): array
+    {
+        return array();
+    }
+
+    public function newRecord(Patient $newRecord): bool
+    {
+        $fname = $newRecord->getFname();
+        $lname = $newRecord->getLname();
+        $phone = $newRecord->getPhone();
+        $email = $newRecord->getEmail();
+        $password = $newRecord->getPassword();
+
+        $sql = "INSERT INTO user_tb(Fname, Lname, Phone, Email, Pass, Type) VALUES(?,?,?,?,?,?)";
+        $stmt = $this->dbConnection->prepare($sql);
+        $type = User::PATIENT;
+        $stmt->bind_param('sssssi', $fname, $lname, $phone, $email, $password, $type);
+
+        if ($stmt->execute()) {
+            $id = $this->dbConnection->insert_id;
+            $gender = ($newRecord->getGender() === Gender::MALE) ? "M" : "F";
+            $birthdate = $newRecord->getBirth()->format("Y-m-d H:i:s");
+            $address = $newRecord->getAddress();
+
+            $sql = "INSERT INTO patient VALUES(?,?,?, ?)";
+            $stmt = $this->dbConnection->prepare($sql);
+            $stmt->bind_param("isss", $id, $gender, $birthdate, $address);
+
+            if ($stmt->execute()) {
+                return true;
+            } else throw new Exception($this->dbConnection->error);
+        } else {
+            throw new Exception($this->dbConnection->error);
+        }
+    }
+}
+
+class StaffController extends ApplicationController
+{
+    public function getById(int $id): Staff
+    {
+        return new Staff(1, "Steve", "Admin", "66678887", 'admin@example.com', '1234', User::STAFF);
     }
 
     public function getAll(): array
@@ -18,12 +80,23 @@ class UserController
         return array();
     }
 
-    public function newRecord(AppItem $newRecord): bool
+    public function newRecord(Staff $newRecord): bool
     {
-        if ($newRecord instanceof User) {
+        $fname = $newRecord->getFname();
+        $lname = $newRecord->getLname();
+        $phone = $newRecord->getPhone();
+        $email = $newRecord->getEmail();
+        $password = $newRecord->getPassword();
+
+        $sql = "INSERT INTO USER_TB(Fname, Lname, Phone, Email, Pass, Type) VALUES(?,?,?,?,?,?)";
+        $stmt = $this->dbConnection->prepare($sql);
+        $type = User::STAFF;
+        $stmt->bind_param('sssssi', $fname, $lname, $phone, $email, $password, $type);
+
+        if ($stmt->execute()) {
             return true;
         } else {
-            throw new InvalidArgumentException("Needs to be an user");
+            throw new Exception($this->dbConnection->error);
         }
     }
 
@@ -33,14 +106,8 @@ class UserController
     }
 }
 
-class AppointmentController
+class AppointmentController extends ApplicationController
 {
-    private mysqli $dbConnection;
-
-    public function __construct()
-    {
-        $this->dbConnection = new mysqli(DB_SERVER, DB_USERNAME, DB_PASS, DB_NAME);
-    }
 
     public function getById(int $id): Appointment
     {
@@ -97,8 +164,34 @@ class AppointmentController
         }
     }
 
-    function __destruct()
+    public function getByPatient(int $patientId): array
     {
-        $this->dbConnection->close();
+        $sql = "SELECT appointment.Appointment_ID, Appointment_Date, Status
+        FROM appointment INNER JOIN pt_condition
+        ON appointment.Condition_ID = pt_condition.Condition_ID
+        INNER JOIN patient 
+        ON patient.Patient_ID = pt_condition.Patient_ID
+        WHERE patient.Patient_ID = ? AND Status = 0";
+
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $patientId);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+
+        $appointments = [];
+
+        $result = $stmt->get_result();
+
+        if (!$result) {
+            throw new Exception("Appointments not found with ID $patientId");
+        }
+
+        while ($appointment = $result->fetch_assoc()) {
+            $appointments[] = $appointment;
+        }
+
+        return $appointments;
     }
 }
