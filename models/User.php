@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace models;
 
 use DateTime;
+use JsonSerializable;
 
 interface AppItem {};
 
@@ -123,7 +124,7 @@ enum Gender
     case FEMALE;
 }
 
-final class Patient extends User
+final class Patient extends User implements JsonSerializable
 {
     private Gender $gender;
     private DateTime $birthdate;
@@ -174,6 +175,20 @@ final class Patient extends User
     public function setAddress(string $address): void
     {
         $this->address = $address;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            "id" => $this->id,
+            "Fname" => $this->fname,
+            "Lname" => $this->lname,
+            "Gender" => ($this->gender === Gender::FEMALE) ? "F" : "M",
+            "Birthdate" => $this->birthdate,
+            "Phone" => $this->phone,
+            "Email" => $this->email,
+            "Address" => $this->address
+        ];
     }
 }
 

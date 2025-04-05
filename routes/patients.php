@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 require_once __DIR__ . '/../models/Content.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Audit.php';
@@ -8,6 +10,7 @@ use audit\AuditGenerator;
 use audit\Outcome;
 
 use models\Gender;
+use models\MedicalRecord;
 use models\Patient;
 
 
@@ -22,6 +25,35 @@ switch ($method) {
     case "GET":
         switch ($subResource) {
             case "medical-record":
+                $id = $_GET["patientID"];
+                $id = $_GET["patientID"];
+                if (!isset($id)) {
+                    throw new Exception("Parameters missing", 400);
+                }
+                if (empty($id)) {
+                    throw new Exception("Parameters cannot be empty", 400);
+                }
+
+                $patientController = new PatientController();
+                $conditionsController = new CondtionController();
+                try {
+                    $patient = $patientController->getById((int)$id);
+                    $patientConditions = $conditionsController->getByPatient($patient->getId());
+                    foreach ($patientConditions as $condition) {
+                        $diagnosisController = new DiagnosisController();
+                        $condition->setDiagnoses($diagnosisController->getByCondition($condition->getId()));
+                        foreach ($condition->getDiagnoses() as $diagnosis) {
+                            $prescriptionController = new PrescriptionController();
+                            $diagnosis->setPrescriptions($prescriptionController->getByDiagnosis($diagnosis->getId()));
+                        }
+                    }
+
+                    $medicalRecord = new MedicalRecord($patient, $patientConditions);
+                    echo json_encode($medicalRecord);
+                } catch (Exception $e) {
+                    AuditGenerator::genarateLog("root", "Get Medical Record", Outcome::ERROR);
+                    throw new Exception("Error getting patient's medical record: " . $e->getMessage(), 500);
+                }
                 break;
             case "condition":
                 break;
@@ -35,8 +67,13 @@ switch ($method) {
                 }
 
                 $controller = new AppointmentController();
-                $appointments = $controller->getByPatient($id);
-                echo json_encode($appointments);
+                try {
+                    $appointments = $controller->getByPatient($id);
+                    echo json_encode($appointments);
+                } catch (Exception $e) {
+                    AuditGenerator::genarateLog("root", "Get Appointments", Outcome::ERROR);
+                    throw new Exception("Error getting patient appointments: " . $e->getMessage(), 500);
+                }
                 break;
             default:
                 throw new Exception("Invalid resource patients/$subResource", 404);

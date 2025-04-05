@@ -2,10 +2,14 @@
 
 use models\AppItem;
 use models\Appointment;
+use models\Condition;
 use models\Gender;
+use models\MedicalRecord;
 use models\Patient;
 use models\Staff;
+use models\Symptom;
 use models\User;
+use models\Diagnosis;
 
 require_once __DIR__ . "/../config/webConfig.php";
 
@@ -28,7 +32,30 @@ class PatientController extends ApplicationController
 {
     public function getById(int $id): Patient
     {
-        return new Patient(1, "Steve", "Admin", "66678887", 'admin@example.com', '1234', Gender::MALE, new DateTime('2025-08-20'), "dasd");
+        $sql = "SELECT * FROM patient INNER JOIN user_tb WHERE User_ID = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $id);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+        $result = $stmt->get_result();
+        $result = $result->fetch_assoc();
+
+        if ($result) {
+            $result["Gender"] = ($result["Gender"] === "F") ? Gender::FEMALE : Gender::MALE;
+            return new Patient(
+                $result["User_ID"],
+                $result["Lname"],
+                $result["Fname"],
+                $result["Phone"],
+                $result["Email"],
+                $result["Pass"],
+                $result["Gender"],
+                new DateTime($result["Birthdate"]),
+                $result["Address"]
+            );
+        } else throw new Exception("Appointment not found with ID $id");
     }
 
     public function getAll(int $id): array
@@ -193,5 +220,141 @@ class AppointmentController extends ApplicationController
         }
 
         return $appointments;
+    }
+}
+
+class CondtionController extends ApplicationController
+{
+    public function getByPatient(int $patientId): array
+    {
+        $sql = "SELECT Condition_ID, StartDate FROM 
+        pt_condition INNER JOIN patient
+        ON pt_condition.Patient_ID = patient.Patient_ID
+        WHERE patient.Patient_ID = ?";
+
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $patientId);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+
+        $conditions = [];
+        $result = $stmt->get_result();
+
+        while ($condition = $result->fetch_assoc()) {
+            $conditions[] = new Condition($condition["Condition_ID"], new DateTime($condition["StartDate"]), $patientId);
+        }
+
+        foreach ($conditions as $condition) {
+            $condition->setSymptoms($this->getSymptoms($condition->getId()));
+        }
+
+        return $conditions;
+    }
+
+    public function getSymptoms(int $conditionID): array
+    {
+        $sql = "SELECT Symptom, condition_symptom.Condition_ID FROM
+        condition_symptom INNER JOIN pt_condition
+        ON condition_symptom.Condition_ID = pt_condition.Condition_ID
+        WHERE pt_condition.Condition_ID = ?";
+
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $conditionID);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+
+        $symptoms = [];
+        $result = $stmt->get_result();
+
+        while ($symptom = $result->fetch_assoc()) {
+            $symptoms[] = new Symptom($symptom["Condition_ID"], $symptom["Symptom"]);
+        }
+
+        return $symptoms;
+    }
+}
+
+class DiagnosisController extends ApplicationController
+{
+    public function getById(int $id): Diagnosis
+    {
+        $sql = "SELECT * FROM DIAGNOSIS WHERE Diagnosis_ID = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param('i', $id);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+        $result = $stmt->get_result();
+        $result = $result->fetch_assoc();
+
+        if ($result) {
+            return new Diagnosis($result["Diagnosis_ID"], $result["Description"], $result["Appointment_ID"]);
+        } else {
+            throw new Exception("Diagnosis not found with ID $id");
+        }
+    }
+
+    public function getByCondition(int $conditionId): array
+    {
+        $sql = "SELECT Diagnosis_ID, Description, diagnosis.Appointment_ID FROM
+        diagnosis INNER JOIN appointment
+        ON diagnosis.Appointment_ID = appointment.Appointment_ID
+        INNER JOIN pt_condition
+        ON appointment.Condition_ID = pt_condition.Condition_ID
+        WHERE pt_condition.Condition_ID = ?";
+
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $conditionId);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+        $result = $stmt->get_result();
+
+        $diagnoses = [];
+        while ($diagnosis = $result->fetch_assoc()) {
+            $diagnoses[] = new Diagnosis($diagnosis["Diagnosis_ID"], $diagnosis["Description"], $diagnosis["Appointment_ID"]);
+        }
+
+        return $diagnoses;
+    }
+}
+
+class PrescriptionController extends ApplicationController
+{
+    public function getByDiagnosis(int $diagnosisID): array
+    {
+        $sql = "SELECT PRESCRIPTION.Prescription_ID, Medicine, Dosage
+        FROM PRESCRIPTION INNER JOIN PRESCRIBE_REL
+        ON PRESCRIPTION.Prescription_ID = PRESCRIBE_REL.Prescription_ID
+        INNER JOIN DIAGNOSIS
+        ON DIAGNOSIS.Diagnosis_ID = PRESCRIBE_REL.Diagnosis_ID
+        WHERE DIAGNOSIS.Diagnosis_ID = ?";
+
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $diagnosisID);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+
+        $prescriptions = [];
+
+        $result = $stmt->get_result();
+
+        if (!$result) {
+            throw new Exception("Diagnosis not found with ID $diagnosisID");
+        }
+
+        while ($prescription = $result->fetch_assoc()) {
+            $prescriptions[] = $prescription;
+        }
+
+        return $prescriptions;
     }
 }

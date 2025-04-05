@@ -50,3 +50,5 @@ Action: Create patient, Outcome: Error
 Action: Create patient, Outcome: Success
 [2025-04-05 02:38:06] IP: ::1, Port: 63462
 Action: Update appointment, Outcome: Success
+[2025-04-05 21:14:03] IP: ::1, Port: 54714
+Action: Get Medical Record, Outcome: Error
