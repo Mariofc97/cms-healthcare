@@ -8,3 +8,7 @@ Action: Get Medical Record, Outcome: Error
 Action: Get Medical Record, Outcome: Error
 [2025-04-05 21:45:14] IP: 127.0.0.1, Port: 55504
 Action: Get Medical Record, Outcome: Error
+[2025-04-06 00:07:53] IP: ::1, Port: 59439
+Action: Update patient, Outcome: Success
+[2025-04-06 00:08:10] IP: ::1, Port: 59461
+Action: Update patient, Outcome: Success

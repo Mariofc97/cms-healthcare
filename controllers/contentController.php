@@ -32,9 +32,10 @@ class PatientController extends ApplicationController
 {
     public function getById(int $id): Patient
     {
-        $sql = "SELECT * FROM patient INNER JOIN user_tb WHERE User_ID = ?";
+        $sql = "SELECT * FROM patient INNER JOIN user_tb WHERE User_ID = ? AND Type = ? AND Activated = 1";
         $stmt = $this->dbConnection->prepare($sql);
-        $stmt->bind_param("i", $id);
+        $type = User::PATIENT;
+        $stmt->bind_param("ii", $id, $type);
 
         if (!$stmt->execute()) {
             throw new Exception("Execution failed: " . $this->dbConnection->error);
@@ -86,6 +87,34 @@ class PatientController extends ApplicationController
             $stmt = $this->dbConnection->prepare($sql);
             $stmt->bind_param("isss", $id, $gender, $birthdate, $address);
 
+            if ($stmt->execute()) {
+                return true;
+            } else throw new Exception($this->dbConnection->error);
+        } else {
+            throw new Exception($this->dbConnection->error);
+        }
+    }
+
+    public function updateRecord(Patient $updatedRecord)
+    {
+        $id = $updatedRecord->getId();
+        $fname = $updatedRecord->getFname();
+        $lname = $updatedRecord->getLname();
+        $phone = $updatedRecord->getPhone();
+        $email = $updatedRecord->getEmail();
+        $pass = $updatedRecord->getPassword();
+        $gender = ($updatedRecord->getGender() === Gender::FEMALE) ? "F" : "M";
+        $birthdate = $updatedRecord->getBirth()->format("Y-m-d");
+        $address = $updatedRecord->getAddress();
+
+        $sql = "UPDATE user_tb SET Fname = ?, Lname = ?, Phone = ?, Email = ?, Pass = ? WHERE User_ID = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("sssssi", $fname, $lname, $phone, $email, $pass, $id);
+
+        if ($stmt->execute()) {
+            $sql = "UPDATE patient SET Gender = ?, Birthdate = ?, Address = ? WHERE Patient_ID = ?";
+            $stmt = $this->dbConnection->prepare($sql);
+            $stmt->bind_param("sssi", $gender, $birthdate, $address, $id);
             if ($stmt->execute()) {
                 return true;
             } else throw new Exception($this->dbConnection->error);

@@ -103,16 +103,24 @@ switch ($method) {
         }
         break;
     case "POST":
+        $id = $_POST["patientID"] ?? null;
+        $fname = $_POST["fname"] ?? null;
+        $lname = $_POST["lname"] ?? null;
+        $phone = $_POST["phone"] ?? null;
+        $email = $_POST["email"] ?? null;
+        $pass = $_POST["password"] ?? null;
+        $gender = $_POST["gender"] ?? null;
+        $birthdate = $_POST["birthdate"] ?? null;
+        $address = $_POST["address"] ?? null;
+
         switch ($subResource) {
             case "":
-                $fname = $_POST["fname"];
-                $lname = $_POST["lname"];
-                $phone = $_POST["phone"] ?? "No Phone";
-                $email = $_POST["email"];
-                $pass = $_POST["password"];
-                $gender = $_POST["gender"];
-                $birthdate = $_POST["birthdate"];
-                $address = $_POST["address"] ?? "No Address";
+                if (!isset($phone)) {
+                    $phone = "No Phone";
+                }
+                if (!isset($address)) {
+                    $address = "No Address";
+                }
 
                 if (!isset($_POST["fname"], $_POST["lname"], $_POST["email"], $_POST["password"], $_POST["gender"], $_POST["birthdate"])) {
                     throw new Exception("Parameters missing", 400);
@@ -145,6 +153,56 @@ switch ($method) {
                 }
                 break;
             case "update":
+                if (!isset($id)) {
+                    throw new Exception("Parameters missing", 400);
+                }
+                if (empty($id)) {
+                    throw new Exception("Parameters cannot be empty", 400);
+                }
+
+                $controller = new PatientController();
+                try {
+                    $patient = $controller->getById((int)$id);
+                    if (isset($fname) && !empty($fname)) {
+                        $patient->setFname($fname);
+                    }
+                    if (isset($lname) && !empty($lname)) {
+                        $patient->setLname($lname);
+                    }
+                    if (isset($phone) && !empty($phone)) {
+                        $patient->setPhone($phone);
+                    }
+                    if (isset($email) && !empty($email)) {
+                        $patient->setEmail($email);
+                    }
+                    if (isset($pass) && !empty($pass)) {
+                        $patient->setPassword($pass);
+                    }
+                    if (isset($gender) && !empty($gender)) {
+                        if ($gender === "M") {
+                            $gender = Gender::MALE;
+                        } elseif ($gender === "F") {
+                            $gender = Gender::FEMALE;
+                        } else {
+                            throw new InvalidArgumentException("Invalid gender", 400);
+                        }
+                        $patient->setGender($gender);
+                    }
+                    if (isset($birthdate) && !empty($birthdate)) {
+                        $birthdate = new DateTime($birthdate);
+                        $patient->setBirth($birthdate);
+                    }
+                    if (isset($address) && !empty($address)) {
+                        $patient->setAddress($address);
+                    }
+
+                    $controller->updateRecord($patient);
+                    AuditGenerator::genarateLog("root", "Update patient", Outcome::SUCCESS);
+                    echo json_encode("Patient updated successfully");
+                } catch (Exception $e) {
+                    AuditGenerator::genarateLog("root", "Update patient", Outcome::ERROR);
+                    throw new Exception("Error updating patient: " . $e->getMessage(), 500);
+                }
                 break;
             case "delete":
                 break;
