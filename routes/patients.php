@@ -8,11 +8,11 @@ require_once __DIR__ . '/../models/Audit.php';
 
 use audit\AuditGenerator;
 use audit\Outcome;
-
+use models\Condition;
 use models\Gender;
 use models\MedicalRecord;
 use models\Patient;
-
+use models\Symptom;
 
 $requestUri = trim($_SERVER["PATH_INFO"], "/") ?? "";
 
@@ -214,12 +214,39 @@ switch ($method) {
 
                 $controller = new PatientController();
                 try {
+                    $patient = $controller->getById((int)$id);
                     $controller->deleteRecord((int)$id);
                     AuditGenerator::genarateLog("root", "Delete patient", Outcome::SUCCESS);
                     echo json_encode("Patient deleted successfully");
                 } catch (Exception $e) {
                     AuditGenerator::genarateLog("root", "Delete patient", Outcome::ERROR);
                     throw new Exception("Error deleting patient: " . $e->getMessage(), 500);
+                }
+                break;
+            case "condition":
+                $patientId = $_POST["patientID"] ?? null;
+                $symptoms = $_POST["symptoms"] ?? [];
+
+                if (!isset($patientId)) {
+                    throw new Exception("Parameters missing", 400);
+                }
+                if (empty($patientId)) {
+                    throw new Exception("Parameters cannot be empty", 400);
+                }
+
+                $symptomsArr = [];
+                foreach ($symptoms as $symptom) {
+                    $symptomsArr[] = new Symptom(0, $symptom);
+                }
+
+                $controller = new ConditionController();
+                $condition = new Condition(0, new DateTime(), (int)$patientId, $symptomsArr);
+                try {
+                    $controller->newRecord($condition);
+                    AuditGenerator::genarateLog("root", "Create condition", Outcome::SUCCESS);
+                } catch (Exception $e) {
+                    AuditGenerator::genarateLog("root", "Create condition", Outcome::ERROR);
+                    throw new Exception("Error creating condition: " . $e->getMessage(), 500);
                 }
                 break;
             default:

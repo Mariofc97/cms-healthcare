@@ -14,3 +14,27 @@ Action: Update patient, Outcome: Success
 Action: Update patient, Outcome: Success
 [2025-04-06 00:15:05] IP: ::1, Port: 59509
 Action: Delete patient, Outcome: Success
+[2025-04-06 00:15:55] IP: ::1, Port: 59533
+Action: Get Medical Record, Outcome: Error
+[2025-04-06 00:16:28] IP: ::1, Port: 59549
+Action: Delete patient, Outcome: Success
+[2025-04-06 00:16:41] IP: ::1, Port: 59553
+Action: Get Medical Record, Outcome: Error
+[2025-04-06 00:25:31] IP: ::1, Port: 55621
+Action: Delete patient, Outcome: Success
+[2025-04-06 00:25:33] IP: ::1, Port: 55621
+Action: Delete patient, Outcome: Success
+[2025-04-06 00:25:38] IP: ::1, Port: 55621
+Action: Delete patient, Outcome: Success
+[2025-04-06 00:27:46] IP: ::1, Port: 55633
+Action: Delete patient, Outcome: Error
+[2025-04-06 00:28:56] IP: ::1, Port: 55644
+Action: Delete patient, Outcome: Success
+[2025-04-06 00:28:58] IP: ::1, Port: 55644
+Action: Delete patient, Outcome: Success
+[2025-04-06 00:29:10] IP: ::1, Port: 55649
+Action: Delete patient, Outcome: Error
+[2025-04-06 00:51:14] IP: ::1, Port: 59841
+Action: Create condition, Outcome: Error
+[2025-04-06 00:54:26] IP: ::1, Port: 59890
+Action: Create condition, Outcome: Success

@@ -125,9 +125,11 @@ class PatientController extends ApplicationController
 
     public function deleteRecord(int $id): bool
     {
-        $sql = "UPDATE user_tb SET Activated = 0 WHERE User_ID = ?";
+        $sql = "UPDATE user_tb SET Activated = 0 WHERE User_ID = ? AND Type = ?";
         $stmt = $this->dbConnection->prepare($sql);
-        $stmt->bind_param("i", $id);
+
+        $type = User::PATIENT;
+        $stmt->bind_param("ii", $id, $type);
 
         if ($stmt->execute()) {
             return true;
@@ -267,6 +269,33 @@ class AppointmentController extends ApplicationController
 
 class ConditionController extends ApplicationController
 {
+    public function newRecord(Condition $newRecord): bool
+    {
+        $startDate = $newRecord->getStartDate()->format("Y-m-d H:i:s");
+        $patient = $newRecord->getPatient();
+        $symptoms = $newRecord->getSymptoms();
+
+        $sql = "INSERT INTO pt_condition(StartDate, Patient_ID) VALUES (?, ?)";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("si", $startDate, $patient);
+
+        if ($stmt->execute()) {
+            $id = $this->dbConnection->insert_id;
+            $sql = "INSERT INTO condition_symptom VALUES (?, ?)";
+            foreach ($symptoms as $symptom) {
+                $stmt = $this->dbConnection->prepare($sql);
+                $description = $symptom->getSymptom();
+                $stmt->bind_param("is", $id, $description);
+                if (!$stmt->execute()) {
+                    throw new Exception($this->dbConnection->error);
+                }
+            }
+            return true;
+        } else {
+            throw new Exception($this->dbConnection->error);
+        }
+    }
+
     public function getByPatient(int $patientId): array
     {
         $sql = "SELECT Condition_ID, StartDate FROM 
