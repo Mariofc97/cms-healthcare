@@ -10,6 +10,7 @@ use models\Staff;
 use models\Symptom;
 use models\User;
 use models\Diagnosis;
+use models\Doctor;
 
 require_once __DIR__ . "/../config/webConfig.php";
 
@@ -179,7 +180,6 @@ class StaffController extends ApplicationController
 
 class AppointmentController extends ApplicationController
 {
-
     public function getById(int $id): Appointment
     {
         $sql = "SELECT * FROM appointment WHERE Appointment_ID = ?";
@@ -237,7 +237,7 @@ class AppointmentController extends ApplicationController
 
     public function getByPatient(int $patientId): array
     {
-        $sql = "SELECT appointment.Appointment_ID, Appointment_Date, Status
+        $sql = "SELECT appointment.Appointment_ID, Appointment_Date, Status, appointment.Condition_ID, appointment.Doctor_ID
         FROM appointment INNER JOIN pt_condition
         ON appointment.Condition_ID = pt_condition.Condition_ID
         INNER JOIN patient 
@@ -260,10 +260,44 @@ class AppointmentController extends ApplicationController
         }
 
         while ($appointment = $result->fetch_assoc()) {
-            $appointments[] = $appointment;
+            $appointments[] = new Appointment(
+                $appointment["Appointment_ID"],
+                new DateTime($appointment["Appointment_Date"]),
+                $appointment["Condition_ID"],
+                $appointment["Doctor_ID"]
+            );
         }
 
         return $appointments;
+    }
+
+    public function getDoctorInfo(int $appointmentId): Doctor
+    {
+        $sql = "SELECT doctor.Doctor_ID, doctor.Specialty, user_tb.Fname, user_tb.Lname, user_tb.Email, user_tb.Pass, user_tb.Phone
+        FROM appointment INNER JOIN doctor
+        ON appointment.Doctor_ID = doctor.Doctor_ID
+        INNER JOIN user_tb
+        ON doctor.Doctor_ID = user_tb.User_ID
+        WHERE Appointment_ID = ?";
+
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $appointmentId);
+
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            $result = $result->fetch_assoc();
+            return new Doctor(
+                $result["Doctor_ID"],
+                $result["Fname"],
+                $result["Lname"],
+                $result["Phone"],
+                $result["Email"],
+                $result["Pass"],
+                $result["Specialty"]
+            );
+        } else {
+            throw new Exception($this->dbConnection->error);
+        }
     }
 }
 

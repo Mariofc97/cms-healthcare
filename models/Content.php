@@ -353,3 +353,47 @@ class MedicalRecord implements AppItem, JsonSerializable
         ];
     }
 }
+
+class DetailedAppointment implements AppItem, JsonSerializable
+{
+    private Doctor $doctor;
+    private Appointment $appointment;
+
+    public function __construct(Doctor $doctor, Appointment $appointment)
+    {
+        $this->doctor = $doctor;
+        $this->appointment = $appointment;
+    }
+
+    public function getDoctor(): Doctor
+    {
+        return $this->doctor;
+    }
+
+    public function setDoctor(Doctor $doctor): void
+    {
+        $this->doctor = $doctor;
+    }
+
+    public function getAppointment(): Appointment
+    {
+        return $this->appointment;
+    }
+
+    public function setAppointment(Appointment $appointment): void
+    {
+        $this->appointment = $appointment;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            "doctorInfo" => [
+                "Fname" => $this->doctor->getFname(),
+                "Lname" => $this->doctor->getLname(),
+                "Specialty" => $this->doctor->getSpecialty()
+            ],
+            "appointmentInfo" => $this->appointment
+        ];
+    }
+}

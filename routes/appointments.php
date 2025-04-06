@@ -10,15 +10,15 @@ use models\Appointment;
 $requestUri = trim($_SERVER["PATH_INFO"], "/") ?? "";
 
 $requestSegments = explode("/", $requestUri);
-$subResource = strtolower($requestSegments[1]) ?? "";
+$subResource = $requestSegments[1] ?? "";
 
 $method = $_SERVER["REQUEST_METHOD"];
 switch ($method) {
     case "POST":
         if ($subResource == "") {
-            $date = $_POST["date"];
-            $condition = $_POST["condition"];
-            $doctor = $_POST["doctor"];
+            $date = $_POST["date"] ?? null;
+            $condition = $_POST["condition"] ?? null;
+            $doctor = $_POST["doctor"] ?? null;
 
             if (!isset($date) || !isset($condition) || !isset($doctor)) {
                 throw new Exception("Parameters missing", 400);
@@ -42,7 +42,7 @@ switch ($method) {
                 throw new Exception("Error creating new appointment: " . $e->getMessage(), 500);
             }
         } elseif ($subResource == "update") {
-            $id = $_POST["appointmentID"];
+            $id = $_POST["appointmentID"] ?? null;
             if (!isset($id)) {
                 throw new Exception("Parameters missing", 400);
             }

@@ -9,6 +9,7 @@ require_once __DIR__ . '/../models/Audit.php';
 use audit\AuditGenerator;
 use audit\Outcome;
 use models\Condition;
+use models\DetailedAppointment;
 use models\Gender;
 use models\MedicalRecord;
 use models\Patient;
@@ -17,15 +18,15 @@ use models\Symptom;
 $requestUri = trim($_SERVER["PATH_INFO"], "/") ?? "";
 
 $requestSegments = explode("/", $requestUri);
-$subResource = @strtolower($requestSegments[1]) ?? "";
+$subResource = $requestSegments[1] ?? "";
 
 $method = $_SERVER["REQUEST_METHOD"];
 
 switch ($method) {
     case "GET":
+        $id = $_GET["patientID"] ?? null;
         switch ($subResource) {
             case "medical-record":
-                $id = $_GET["patientID"];
                 if (!isset($id)) {
                     throw new Exception("Parameters missing", 400);
                 }
@@ -37,13 +38,13 @@ switch ($method) {
                 $conditionsController = new ConditionController();
                 try {
                     $patient = $patientController->getById((int)$id);
-                    $patientConditions = $conditionsController->getByPatient($patient->getId());
+                    $patientConditions = $conditionsController->getByPatient((int)$patient->getId());
                     foreach ($patientConditions as $condition) {
                         $diagnosisController = new DiagnosisController();
-                        $condition->setDiagnoses($diagnosisController->getByCondition($condition->getId()));
+                        $condition->setDiagnoses($diagnosisController->getByCondition((int)$condition->getId()));
                         foreach ($condition->getDiagnoses() as $diagnosis) {
                             $prescriptionController = new PrescriptionController();
-                            $diagnosis->setPrescriptions($prescriptionController->getByDiagnosis($diagnosis->getId()));
+                            $diagnosis->setPrescriptions($prescriptionController->getByDiagnosis((int)$diagnosis->getId()));
                         }
                     }
 
@@ -55,7 +56,6 @@ switch ($method) {
                 }
                 break;
             case "condition":
-                $id = $_GET["patientID"];
                 if (!isset($id)) {
                     throw new Exception("Parameters missing", 400);
                 }
@@ -70,7 +70,7 @@ switch ($method) {
                     if ($conditionsNum !== 0) {
                         $latestCondition = $conditions[$conditionsNum - 1];
                         $diagnosisController = new DiagnosisController();
-                        $latestCondition->setDiagnoses($diagnosisController->getByCondition($latestCondition->getId()));
+                        $latestCondition->setDiagnoses($diagnosisController->getByCondition((int)$latestCondition->getId()));
                         echo json_encode($latestCondition);
                     } else {
                         echo json_encode("Patient doesn't have any conditions");
@@ -81,7 +81,6 @@ switch ($method) {
                 }
                 break;
             case "appointments":
-                $id = $_GET["patientID"];
                 if (!isset($id)) {
                     throw new Exception("Parameters missing", 400);
                 }
@@ -91,8 +90,18 @@ switch ($method) {
 
                 $controller = new AppointmentController();
                 try {
-                    $appointments = $controller->getByPatient($id);
-                    echo json_encode($appointments);
+                    $patientController = new PatientController();
+                    $patientController->getById((int)$id);
+                    $appointments = $controller->getByPatient((int)$id);
+
+                    $detailedAppointments = [];
+                    foreach ($appointments as $appointment) {
+                        $doctor = $controller->getDoctorInfo($appointment->getId());
+                        $detailedAppointments[] = new DetailedAppointment($doctor, $appointment);
+                    }
+
+                    AuditGenerator::genarateLog("root", "Get Appointments", Outcome::SUCCESS);
+                    echo json_encode($detailedAppointments);
                 } catch (Exception $e) {
                     AuditGenerator::genarateLog("root", "Get Appointments", Outcome::ERROR);
                     throw new Exception("Error getting patient appointments: " . $e->getMessage(), 500);

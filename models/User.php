@@ -198,13 +198,14 @@ final class Doctor extends User
 
     public function __construct(
         int $id,
-        string $name,
+        string $fname,
+        string $lname,
         string $phone,
         string $email,
         string $password,
         string $specialty
     ) {
-        parent::__construct($id, $name, $phone, $email, $password, User::DOCTOR);
+        parent::__construct($id, $fname, $lname, $phone, $email, $password, User::DOCTOR);
         $this->specialty = $specialty;
     }
 
