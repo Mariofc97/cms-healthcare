@@ -155,7 +155,7 @@ switch ($method) {
                 try {
                     $controller->newRecord($newPatient);
                     AuditGenerator::genarateLog("root", "Create patient", Outcome::SUCCESS);
-                    echo "Patient created successfully";
+                    echo json_encode("Patient created successfully");
                 } catch (Exception $e) {
                     AuditGenerator::genarateLog("root", "Create patient", Outcome::ERROR);
                     throw new Exception("Error creating new patient: " . $e->getMessage(), 500);

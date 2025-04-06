@@ -235,6 +235,19 @@ class AppointmentController extends ApplicationController
         }
     }
 
+    public function deleteRecord(int $id): bool
+    {
+        $sql = "DELETE FROM appointment WHERE Appointment_ID = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            throw new Exception($this->dbConnection->error);
+        }
+    }
+
     public function getByPatient(int $patientId): array
     {
         $sql = "SELECT appointment.Appointment_ID, Appointment_Date, Status, appointment.Condition_ID, appointment.Doctor_ID

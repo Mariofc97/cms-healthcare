@@ -66,3 +66,27 @@ Action: Get Appointments, Outcome: Success
 Action: Get Appointments, Outcome: Success
 [2025-04-06 02:55:34] IP: ::1, Port: 61204
 Action: Get Appointments, Outcome: Success
+[2025-04-06 03:01:00] IP: ::1, Port: 61290
+Action: Get Appointments, Outcome: Success
+[2025-04-06 03:02:34] IP: ::1, Port: 61303
+Action: Create appointment, Outcome: Success
+[2025-04-06 03:04:22] IP: ::1, Port: 61334
+Action: Update appointment, Outcome: Success
+[2025-04-06 03:06:51] IP: ::1, Port: 61411
+Action: Create patient, Outcome: Success
+[2025-04-06 03:07:51] IP: ::1, Port: 61439
+Action: Update patient, Outcome: Success
+[2025-04-06 03:08:43] IP: ::1, Port: 61489
+Action: Delete patient, Outcome: Success
+[2025-04-06 03:10:51] IP: ::1, Port: 61571
+Action: Get Medical Record, Outcome: Error
+[2025-04-06 03:20:42] IP: ::1, Port: 61661
+Action: Delete appointment, Outcome: Success
+[2025-04-06 03:22:42] IP: ::1, Port: 61784
+Action: Delete appointment, Outcome: Success
+[2025-04-06 03:22:49] IP: ::1, Port: 61804
+Action: Delete appointment, Outcome: Error
+[2025-04-06 03:22:52] IP: ::1, Port: 61808
+Action: Delete appointment, Outcome: Error
+[2025-04-06 03:22:55] IP: ::1, Port: 61811
+Action: Delete appointment, Outcome: Error
