@@ -21,7 +21,7 @@ class AuditGenerator
         $remotePort = $_SERVER['REMOTE_PORT'];
         $outcome = ($outcome === Outcome::SUCCESS) ? "Success" : "Error";
         $logEntry = "[$timestamp] IP: $remoteIP, Port: $remotePort\nAction: $action, Outcome: $outcome\n";
-        $targetDir = "../data/$username/";
+        $targetDir = __DIR__ . "/../data/$username/";
         if (!file_exists($targetDir)) {
             mkdir($targetDir);
         }

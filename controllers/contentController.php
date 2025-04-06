@@ -4,10 +4,11 @@ use models\AppItem;
 use models\Appointment;
 use models\Diagnosis;
 use models\User;
+use models\Staff;
 
 include __DIR__ . "/../config/webConfig.php";
 
-abstract class ApplicationcController {
+abstract class ApplicationController {
     protected mysqli $dbConnection;
 
     public function __construct()
@@ -21,11 +22,26 @@ abstract class ApplicationcController {
     }
 }
 
-class UserController extends ApplicationcController
+class StaffController extends ApplicationController
 {
-    public function getById(int $id): AppItem
+    public function getById(int $id): Staff
     {
-        return new User(1, "Steve", "Admin", "66678887", 'admin@example.com', '1234', User::STAFF);
+        $sql = "SELECT * FROM USER_TB WHERE User_ID = ? AND Type = ? AND Activated = 1";
+        $stmt = $this->dbConnection->prepare($sql);
+        $type = User::STAFF;
+        $stmt->bind_param('ii',$id, $type);
+
+        if(!$stmt->execute()){
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+        $result = $stmt->get_result();
+        $result = $result->fetch_assoc();
+
+        if($result){
+            return new Staff($result["User_ID"], $result["Fname"], $result["Lname"], $result["Phone"], $result["Email"], $result["Pass"], User::STAFF);
+        }else{
+            throw new Exception("Staff not found with ID $id");
+        }
     }
 
     public function getAll(): array
@@ -49,12 +65,35 @@ class UserController extends ApplicationcController
         if($stmt->execute()){
             return true;
         }else{
-            throw new Exception($this->dbConnection->error);
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
         }
     }
 
-    public function updateRecord(AppItem $updatedItem): bool
+    public function updateRecord(Staff $updatedItem): bool
     {
+        $id = $updatedItem->getId();  //User.php > Staff
+        $fname = $updatedItem->getFname();
+        $lname = $updatedItem->getLname();
+        $phone = $updatedItem->getPhone();
+        $email = $updatedItem->getEmail();
+        $password = $updatedItem->getPassword();
+
+        $sql = "UPDATE USER_TB SET Fname=?, Lname=?, Phone=?, Email=?, Pass=? WHERE User_ID=?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param('sssssi', $fname, $lname, $phone, $email, $password, $id);
+        if(!$stmt->execute()){
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+        return true;
+    }
+
+    public function deleteStaff(int $id): bool {
+        $sql = "UPDATE USER_TB SET Activated=0 WHERE User_ID=?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param('i', $id);
+        if(!$stmt->execute()){
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
         return true;
     }
 }
@@ -102,7 +141,7 @@ class AppointmentController
     }
 }
 
-class DiagnosisController extends ApplicationcController{
+class DiagnosisController extends ApplicationController{
     public function getById(int $id): Diagnosis{
         $sql = "SELECT * FROM DIAGNOSIS WHERE Diagnosis_ID = ?";
         $stmt = $this->dbConnection->prepare($sql);
@@ -120,9 +159,25 @@ class DiagnosisController extends ApplicationcController{
             throw new Exception("Diagnosis not found with ID $id");
         }
     }
+
+    public function newRecord(Diagnosis $newRecord): bool //Content.php
+    {
+        $description = $newRecord->getDescription();
+        $appointmentid = $newRecord->getApppointment();
+        // var_dump($description, $appointmentid);
+        $sql = "INSERT INTO DIAGNOSIS(Description, Appointment_ID) VALUES(?, ?)";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param('si', $description, $appointmentid);
+
+        if($stmt->execute()) {
+            return true;
+        }else{
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+    }
 }
 
-class PrescriptionController extends ApplicationcController {
+class PrescriptionController extends ApplicationController {
     public function getByDiagnosis(int $diagnosisID): array {
         $sql = "SELECT PRESCRIPTION.Prescription_ID, Medicine, Dosage
         FROM PRESCRIPTION INNER JOIN PRESCRIBE_REL
@@ -143,7 +198,7 @@ class PrescriptionController extends ApplicationcController {
         $result = $stmt->get_result();
 
         if(!$result){
-            throw new Exception("Diagnosis not found with ID $id");
+            throw new Exception("Diagnosis not found with ID $diagnosisID");
         }
 
         while($prescription = $result->fetch_assoc()){

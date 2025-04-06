@@ -1,4 +1,6 @@
 <?php
+header('Content-Type: application/json; charset=utf-8');
+
 $requestUri = trim($_SERVER["PATH_INFO"], "/") ?? "";
 
 $requestSegments = explode("/", $requestUri);

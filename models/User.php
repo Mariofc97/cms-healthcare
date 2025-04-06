@@ -207,7 +207,6 @@ final class Doctor extends User
     }
 }
 
-final class Staff extends User
-{
-
+final class Staff extends User{
+    
 }
