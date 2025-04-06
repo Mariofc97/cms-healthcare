@@ -13,7 +13,7 @@ require_once __DIR__ . '/../models/Audit.php';
 $method = $_SERVER["REQUEST_METHOD"];
 switch ($method) {
   case "GET":  //get diagnoses
-    $id = $_GET["diagnosisID"]; // Get the 'diagnosisID' parameter from the URL and assign it to $id
+    $id = $_GET["diagnosisID"] ?? null; // Get the 'diagnosisID' parameter from the URL and assign it to $id
     if(!isset($id)){ // Check if the 'id' variable is set
       throw new Exception("Parameters missing", 400); //400 Bad Request, client error response status code
     }
@@ -35,8 +35,8 @@ switch ($method) {
     }
     break;
   case "POST": //adding new diagnosis
-    $appointmentid = $_POST["appointmentID"];  // Get the 'appointmentID' parameter from the URL and assign it to $appointmentid
-    $description = $_POST["description"];  // Get the 'description' parameter from the URL and assign it to $description
+    $appointmentid = $_POST["appointmentID"] ?? null;  // Get the 'appointmentID' parameter from the URL and assign it to $appointmentid
+    $description = $_POST["description"] ?? null;  // Get the 'description' parameter from the URL and assign it to $description
     if(!isset($appointmentid) || !isset($description)){
       throw new Exception("Parameters missing", 400);  
     }
