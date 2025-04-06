@@ -12,3 +12,5 @@ Action: Get Medical Record, Outcome: Error
 Action: Update patient, Outcome: Success
 [2025-04-06 00:08:10] IP: ::1, Port: 59461
 Action: Update patient, Outcome: Success
+[2025-04-06 00:15:05] IP: ::1, Port: 59509
+Action: Delete patient, Outcome: Success

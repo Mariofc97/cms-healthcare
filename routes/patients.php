@@ -205,6 +205,22 @@ switch ($method) {
                 }
                 break;
             case "delete":
+                if (!isset($id)) {
+                    throw new Exception("Parameters missing", 400);
+                }
+                if (empty($id)) {
+                    throw new Exception("Parameters cannot be empty", 400);
+                }
+
+                $controller = new PatientController();
+                try {
+                    $controller->deleteRecord((int)$id);
+                    AuditGenerator::genarateLog("root", "Delete patient", Outcome::SUCCESS);
+                    echo json_encode("Patient deleted successfully");
+                } catch (Exception $e) {
+                    AuditGenerator::genarateLog("root", "Delete patient", Outcome::ERROR);
+                    throw new Exception("Error deleting patient: " . $e->getMessage(), 500);
+                }
                 break;
             default:
                 throw new Exception("Invalid resource patients/$subResource", 404);

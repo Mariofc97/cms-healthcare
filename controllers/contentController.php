@@ -122,6 +122,19 @@ class PatientController extends ApplicationController
             throw new Exception($this->dbConnection->error);
         }
     }
+
+    public function deleteRecord(int $id): bool
+    {
+        $sql = "UPDATE user_tb SET Activated = 0 WHERE User_ID = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            throw new Exception($this->dbConnection->error);
+        }
+    }
 }
 
 class StaffController extends ApplicationController
