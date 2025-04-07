@@ -140,6 +140,117 @@ class PatientController extends ApplicationController
     }
 }
 
+class DoctorController extends ApplicationController {
+
+    public function getById(int $id): Doctor{
+        $sql = 
+            "SELECT * FROM doctor
+            INNER JOIN user_tb
+            ON doctor.Doctor_ID = user_tb.User_ID
+            WHERE Doctor_ID = ? AND Type = ? AND Activated = 1";
+        $stmt = $this->dbConnection->prepare($sql);
+        $type = User::DOCTOR;
+        $stmt->bind_param("ii",$id, $type);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+
+        $result = $stmt->get_result()->fetch_assoc();
+
+        if ($result) {
+            return new Doctor(
+                $result["Doctor_ID"],
+                $result["Fname"],
+                $result["Lname"],
+                $result["Phone"],
+                $result["Email"],
+                $result["Pass"],
+                $result["Specialty"]
+            );
+        } else {
+            throw new Exception("Doctor not found with ID $id");
+        }
+    }
+
+    public function newRecord(Doctor $doctor): bool {
+        $id = $doctor->getId();
+        $fname = $doctor->getFname();
+        $lname = $doctor->getLname();
+        $phone = $doctor->getPhone();
+        $email = $doctor->getEmail();
+        $password = $doctor->getPassword();
+        $specialty = $doctor->getSpecialty();
+
+        $sqlUser = 
+            "INSERT INTO user_tb (Fname, Lname, Phone, Email, Pass, Type) VALUES(?, ?, ?, ?, ?, ?)";
+        $stmtUser = $this->dbConnection->prepare($sqlUser);
+        $type = User::DOCTOR;
+        $stmtUser->bind_param("sssssi", $fname, $lname, $phone, $email, $password, $type);
+
+        if($stmtUser->execute()) {
+            $userId = $this->dbConnection->insert_id;
+
+            $sqlDoctor = "INSERT INTO doctor (Doctor_ID, Specialty) VALUES (?, ?)";
+            $stmtDoctor = $this->dbConnection->prepare($sqlDoctor);
+            $stmtDoctor->bind_param("is", $userId, $specialty);
+
+            if($stmtDoctor->execute()) {
+                return true;
+            } else {
+                throw new Exception($this->dbConnection->error);
+            }
+        } else {
+            throw new Exception($this->dbConnection->error);
+        }
+    }
+
+    public function updateRecord(Doctor $doctor): bool {
+        $id = $doctor->getId();
+        $fname = $doctor->getFname();
+        $lname = $doctor->getLname();
+        $phone = $doctor->getPhone();
+        $email = $doctor->getEmail();
+        $password = $doctor->getPassword();
+        $specialty = $doctor->getSpecialty();
+
+        $sqlUser =
+        "UPDATE user_tb SET Fname = ?, Lname = ?, Phone = ?, Email = ?, Pass = ?
+        WHERE User_ID = ?";
+        $stmtUser =  $this->dbConnection->prepare($sqlUser);
+        $stmtUser->bind_param("sssssi", $fname, $lname, $phone, $email, $password, $id);
+
+        if($stmtUser->execute()) {
+            $sqlDoctor = "UPDATE doctor SET Specialty = ? WHERE Doctor_ID = ?";
+            $stmtDoctor = $this->dbConnection->prepare($sqlDoctor);
+            $stmtDoctor->bind_param("si", $specialty, $id);
+
+            if ($stmtDoctor->execute()) {
+                return true;
+            } else {
+                throw new Exception($this->dbConnection->error);
+            }
+        } else {
+            throw new Exception($this->dbConnection->error);
+        }
+    }
+
+    public function deleteRecord(int $id): bool {
+        $sql = "UPDATE user_tb SET Activated = 0
+        WHERE User_ID = ? AND Type = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $type = User::DOCTOR;
+        $stmt->bind_param("ii",$id, $type);
+
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            throw new Exception($this->dbConnection->error);
+        }
+    }
+
+}
+
 class StaffController extends ApplicationController
 {
     public function getById(int $id): Staff
