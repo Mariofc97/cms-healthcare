@@ -169,8 +169,22 @@ class DoctorController extends ApplicationController {
                 $result["Specialty"]
             );
         } else {
-            throw new Exception("Doctor not found with ID $id");
+            throw new \Exception("Doctor not found with ID $id",404);
         }
+    }
+
+    public function doctorExistsByName(string $fname, string $lname): bool {
+        $sql = "SELECT 1 FROM user_tb WHERE Fname = ? AND Lname = ? AND Type = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $type = User::DOCTOR;
+        $stmt->bind_param("ssi", $fname, $lname, $type);
+    
+        if (!$stmt->execute()) {
+            throw new Exception("Failed to check doctor existence: " . $this->dbConnection->error);
+        }
+    
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result ? true : false;
     }
 
     public function newRecord(Doctor $doctor): bool {
