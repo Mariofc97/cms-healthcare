@@ -200,3 +200,33 @@ Action: Create doctor, Outcome: Error
 Action: Create doctor, Outcome: Error
 [2025-04-07 20:14:24] IP: ::1, Port: 53383
 Action: Create doctor, Outcome: Error
+[2025-04-07 20:59:24] IP: ::1, Port: 53249
+Action: Create doctor, Outcome: Error
+[2025-04-07 21:00:52] IP: ::1, Port: 53506
+Action: Create doctor, Outcome: Error
+[2025-04-07 21:01:13] IP: ::1, Port: 53518
+Action: Create doctor, Outcome: Error
+[2025-04-07 21:03:28] IP: ::1, Port: 53539
+Action: Create doctor, Outcome: Error
+[2025-04-07 21:03:29] IP: ::1, Port: 53543
+Action: Create doctor, Outcome: Error
+[2025-04-07 21:04:01] IP: ::1, Port: 53560
+Action: Create doctor, Outcome: Error
+[2025-04-07 21:04:24] IP: ::1, Port: 53564
+Action: Create doctor, Outcome: Success
+[2025-04-07 21:05:16] IP: ::1, Port: 53609
+Action: Update doctor, Outcome: Success
+[2025-04-07 21:05:36] IP: ::1, Port: 53635
+Action: Delete doctor, Outcome: Success
+[2025-04-07 21:06:29] IP: ::1, Port: 53710
+Action: Create doctor, Outcome: Success
+[2025-04-07 21:06:51] IP: ::1, Port: 53739
+Action: Update doctor, Outcome: Error
+[2025-04-07 21:06:54] IP: ::1, Port: 53739
+Action: Update doctor, Outcome: Error
+[2025-04-07 21:06:59] IP: ::1, Port: 53745
+Action: Update doctor, Outcome: Success
+[2025-04-07 21:07:10] IP: ::1, Port: 53767
+Action: Delete doctor, Outcome: Success
+[2025-04-07 21:07:15] IP: ::1, Port: 53767
+Action: Delete doctor, Outcome: Error
