@@ -4,7 +4,7 @@ session_start();
 require_once __DIR__ . "/../config/webConfig.php";
 require_once __DIR__ . "/contentController.php";
 
-class authController extends ApplicationController
+class AuthController extends ApplicationController
 {
     public function authUser(string $email, string $password): bool
     {
@@ -17,10 +17,10 @@ class authController extends ApplicationController
                 throw new Exception("Login failed", 404);
             }
             $result = $result->fetch_assoc();
-            $userID = $result["User_ID"];
+            $email = $result["Email"];
             $hashedPass = $result["Pass"];
             if (password_verify($password, $hashedPass)) {
-                $_SESSION["userID"] = $userID;
+                $_SESSION["userEmail"] = $email;
                 $_SESSION["userRole"] = $result["Type"];
                 return true;
             } else {

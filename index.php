@@ -8,6 +8,10 @@ $resource = strtolower($requestSegments[0]);
 
 try {
 
+    if ($resource === "login") {
+        require_once "./routes/login.php";
+    }
+
     switch ($resource) {
         case "patients":
             require_once "./routes/patients.php";
@@ -28,7 +32,6 @@ try {
             require_once "./routes/prescriptions.php";
             break;
         case "login":
-            require_once "./routes/login.php";
             break;
         default:
             throw new Exception("Invalid resource $resource", 404);
