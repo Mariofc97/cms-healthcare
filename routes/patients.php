@@ -61,7 +61,7 @@ switch ($method) {
                             echo json_encode($medicalRecord);
                         } catch (Exception $e) {
                             AuditGenerator::genarateLog("root", "Get Medical Record", Outcome::ERROR);
-                            throw new Exception("Error getting patient's medical record: " . $e->getMessage(), 500);
+                            throw new Exception("Error getting patient's medical record: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
                         throw new Exception("User not allowed", 403);
@@ -83,7 +83,7 @@ switch ($method) {
                             }
                         } catch (Exception $e) {
                             AuditGenerator::genarateLog("root", "Get patient latest condition", Outcome::ERROR);
-                            throw new Exception("Error getting patient's latest condition: " . $e->getMessage(), 500);
+                            throw new Exception("Error getting patient's latest condition: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
                         throw new Exception("User not allowed", 403);
@@ -107,7 +107,7 @@ switch ($method) {
                             echo json_encode($detailedAppointments);
                         } catch (Exception $e) {
                             AuditGenerator::genarateLog("root", "Get Appointments", Outcome::ERROR);
-                            throw new Exception("Error getting patient appointments: " . $e->getMessage(), 500);
+                            throw new Exception("Error getting patient appointments: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
                         throw new Exception("User not allowed", 403);
@@ -179,7 +179,7 @@ switch ($method) {
                         echo json_encode("Patient created successfully");
                     } catch (Exception $e) {
                         AuditGenerator::genarateLog("root", "Create patient", Outcome::ERROR);
-                        throw new Exception("Error creating new patient: " . $e->getMessage(), 500);
+                        throw new Exception("Error creating new patient: " . $e->getMessage(), $e->getCode());
                     }
                     break;
                 case "update":
@@ -237,7 +237,7 @@ switch ($method) {
                             echo json_encode("Patient updated successfully");
                         } catch (Exception $e) {
                             AuditGenerator::genarateLog("root", "Update patient", Outcome::ERROR);
-                            throw new Exception("Error updating patient: " . $e->getMessage(), 500);
+                            throw new Exception("Error updating patient: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
                         throw new Exception("User not allowed", 403);
@@ -265,7 +265,7 @@ switch ($method) {
                             echo json_encode("Patient deleted successfully");
                         } catch (Exception $e) {
                             AuditGenerator::genarateLog("root", "Delete patient", Outcome::ERROR);
-                            throw new Exception("Error deleting patient: " . $e->getMessage(), 500);
+                            throw new Exception("Error deleting patient: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
                         throw new Exception("User not allowed", 403);
@@ -302,7 +302,7 @@ switch ($method) {
                             AuditGenerator::genarateLog("root", "Create condition", Outcome::SUCCESS);
                         } catch (Exception $e) {
                             AuditGenerator::genarateLog("root", "Create condition", Outcome::ERROR);
-                            throw new Exception("Error creating condition: " . $e->getMessage(), 500);
+                            throw new Exception("Error creating condition: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
                         throw new Exception("User not allowed", 403);
