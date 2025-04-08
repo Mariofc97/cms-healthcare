@@ -36,3 +36,5 @@ Action: Delete Staff, Outcome: Error
 Action: Delete Staff, Outcome: Error
 [2025-04-08 00:12:11] IP: ::1, Port: 53633
 Action: Delete Staff, Outcome: Error
+[2025-04-08 20:25:35] IP: ::1, Port: 51766
+Action: Add Staff, Outcome: Success
