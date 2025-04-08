@@ -74,7 +74,17 @@ class PatientController extends ApplicationController
         $lname = $newRecord->getLname();
         $phone = $newRecord->getPhone();
         $email = $newRecord->getEmail();
-        $password = $newRecord->getPassword();
+        $password = password_hash($newRecord->getPassword(), PASSWORD_ARGON2I);
+
+        $sql = "SELECT Email FROM user_tb WHERE Email = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("s", $email);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                throw new Exception("Could not add patient with email $email", 500);
+            }
+        }
 
         $sql = "INSERT INTO user_tb(Fname, Lname, Phone, Email, Pass, Type) VALUES(?,?,?,?,?,?)";
         $stmt = $this->dbConnection->prepare($sql);

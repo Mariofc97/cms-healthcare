@@ -27,6 +27,9 @@ try {
         case "prescriptions":
             require_once "./routes/prescriptions.php";
             break;
+        case "login":
+            require_once "./routes/login.php";
+            break;
         default:
             throw new Exception("Invalid resource $resource", 404);
     }
