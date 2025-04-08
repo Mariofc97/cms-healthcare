@@ -13,13 +13,14 @@ require_once __DIR__ . '/../models/Audit.php';
 $method = $_SERVER["REQUEST_METHOD"];
 switch ($method) {
   case "GET":  //get diagnoses
-    $id = filter_var($_GET["diagnosisID"]) ?? null; // Get the 'diagnosisID' parameter from the URL and assign it to $id
+    $id = $_GET["diagnosisID"] ?? null; // Get the 'diagnosisID' parameter from the URL and assign it to $id
     if(!isset($id)){ // Check if the 'id' variable is set
       throw new Exception("Parameters missing", 400); //400 Bad Request, client error response status code
     }
     if(empty($id)){
       throw new Exception("Parameters cannnot be empty", 400);
     }
+    $id = filter_var($_GET["diagnosisID"]) ?? null; // Get the 'diagnosisID' parameter from the URL and assign it to $id
 
     $controller = new DiagnosisController(); //creat new instance (contentController.php)
     try{
@@ -43,6 +44,8 @@ switch ($method) {
     if(empty($appointmentid) || empty($description)){
       throw new Exception("Parameters cannnot be empty", 400);
     }
+    $appointmentid = filter_var($_POST["appointmentID"], FILTER_SANITIZE_NUMBER_INT) ?? null;  // Get the 'appointmentID' parameter from the URL and assign it to $appointmentid
+    $description = htmlspecialchars(strip_tags($_POST["description"])) ?? null;  // Get the 'description' parameter from the URL and assign it to $description
 
     try{
       $newDiagnosis = new Diagnosis(0, $description, $appointmentid); // Create a new Diagnosis instance with the given values (Content.php)
