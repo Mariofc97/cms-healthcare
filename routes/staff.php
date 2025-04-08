@@ -61,7 +61,7 @@ switch ($method) {
           echo json_encode("Staff updated successfully");
         } catch (Exception $e) {
           AuditGenerator::genarateLog("root", "Update Staff", Outcome::ERROR);
-          throw new Exception("Error updating staff information." . $e->getMessage(), 500); //500 Internal Server Error, server error response status code
+          throw new Exception("Error updating staff information. " . $e->getMessage(), 500); //500 Internal Server Error, server error response status code
         }
       } elseif (in_array("delete", $path)) {  //delete(deactivate) staff
         try {
@@ -70,7 +70,7 @@ switch ($method) {
           echo json_encode("Staff deleted successfully");
         } catch (Exception $e) {
           AuditGenerator::genarateLog("root", "Delete Staff", Outcome::ERROR);
-          throw new Exception("Error deleting staff information." . $e->getMessage(), 500);
+          throw new Exception("Error deleting staff information. " . $e->getMessage(), 500);
         }
       }
 
@@ -92,14 +92,10 @@ switch ($method) {
       try {
         $controller = new StaffController();
         $controller->newRecord($newStaff);
-        AuditGenerator::genarateLog("root", "Add new Staff", outcome::SUCCESS);
+        AuditGenerator::genarateLog("root", "Add New Staff", outcome::SUCCESS);
       } catch (Exception $e) {
-        AuditGenerator::genarateLog("root", "Add new Staff", outcome::ERROR);
-        throw new Exception("Error add new staff. " . $e->getMessage(), 500);
-        AuditGenerator::genarateLog("root", "Add Staff", outcome::SUCCESS);
-      } catch (Exception $e) {
-        AuditGenerator::genarateLog("root", "Add Staff", outcome::ERROR);
-        throw new Exception("Error adding staff." . $e->getMessage(), 500);
+        AuditGenerator::genarateLog("root", "Add New Staff", outcome::ERROR);
+        throw new Exception("Error adding new staff. " . $e->getMessage(), 500);
       }
     }
     break;
