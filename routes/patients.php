@@ -34,9 +34,9 @@ switch ($method) {
                     throw new Exception("Parameters cannot be empty", 400);
                 }
 
-                $patientController = new PatientController();
-                $conditionsController = new ConditionController();
                 try {
+                    $patientController = new PatientController();
+                    $conditionsController = new ConditionController();
                     $patient = $patientController->getById((int)$id);
                     $patientConditions = $conditionsController->getByPatient((int)$patient->getId());
                     foreach ($patientConditions as $condition) {
@@ -63,8 +63,8 @@ switch ($method) {
                     throw new Exception("Parameters cannot be empty", 400);
                 }
 
-                $conditionController = new ConditionController();
                 try {
+                    $conditionController = new ConditionController();
                     $conditions = $conditionController->getByPatient((int)$id);
                     $conditionsNum = count($conditions);
                     if ($conditionsNum !== 0) {
@@ -88,8 +88,8 @@ switch ($method) {
                     throw new Exception("Parameters cannot be empty", 400);
                 }
 
-                $controller = new AppointmentController();
                 try {
+                    $controller = new AppointmentController();
                     $patientController = new PatientController();
                     $patientController->getById((int)$id);
                     $appointments = $controller->getByPatient((int)$id);
@@ -150,9 +150,9 @@ switch ($method) {
                 $birthdate = new DateTime($birthdate);
 
                 $newPatient = new Patient(0, $lname, $fname, $phone, $email, $pass, $gender, $birthdate, $address);
-                $controller = new PatientController();
 
                 try {
+                    $controller = new PatientController();
                     $controller->newRecord($newPatient);
                     AuditGenerator::genarateLog("root", "Create patient", Outcome::SUCCESS);
                     echo json_encode("Patient created successfully");
@@ -169,8 +169,8 @@ switch ($method) {
                     throw new Exception("Parameters cannot be empty", 400);
                 }
 
-                $controller = new PatientController();
                 try {
+                    $controller = new PatientController();
                     $patient = $controller->getById((int)$id);
                     if (isset($fname) && !empty($fname)) {
                         $patient->setFname($fname);
@@ -221,8 +221,8 @@ switch ($method) {
                     throw new Exception("Parameters cannot be empty", 400);
                 }
 
-                $controller = new PatientController();
                 try {
+                    $controller = new PatientController();
                     $patient = $controller->getById((int)$id);
                     $controller->deleteRecord((int)$id);
                     AuditGenerator::genarateLog("root", "Delete patient", Outcome::SUCCESS);
@@ -248,9 +248,9 @@ switch ($method) {
                     $symptomsArr[] = new Symptom(0, $symptom);
                 }
 
-                $controller = new ConditionController();
-                $condition = new Condition(0, new DateTime(), (int)$patientId, $symptomsArr);
                 try {
+                    $controller = new ConditionController();
+                    $condition = new Condition(0, new DateTime(), (int)$patientId, $symptomsArr);
                     $controller->newRecord($condition);
                     AuditGenerator::genarateLog("root", "Create condition", Outcome::SUCCESS);
                 } catch (Exception $e) {

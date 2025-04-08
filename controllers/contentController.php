@@ -21,6 +21,9 @@ abstract class ApplicationController
     public function __construct()
     {
         $this->dbConnection = new mysqli(DB_SERVER, DB_USERNAME, DB_PASS, DB_NAME);
+        if ($this->dbConnection->connect_error) {
+            throw new Exception("Error connecting to the database: " . $this->dbConnection->connect_error);
+        }
     }
 
     public function __destruct()
