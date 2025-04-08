@@ -27,16 +27,22 @@ switch ($method) {
     case "GET":
         if (isset($_SESSION["userEmail"])) {
             $id = $_GET["patientID"] ?? null;
+
+            if (!isset($id)) {
+                throw new Exception("Parameters missing", 400);
+            }
+            if (empty($id)) {
+                throw new Exception("Parameters cannot be empty", 400);
+            }
+
+            $id = htmlspecialchars(strip_tags($id));
+            if (!filter_var($id, FILTER_VALIDATE_INT)) {
+                throw new Exception("Invalid patient ID", 400);
+            }
+
             switch ($subResource) {
                 case "medical-record":
                     if ($_SESSION["userRole"] === User::PATIENT || $_SESSION["userRole"] === User::DOCTOR) {
-                        if (!isset($id)) {
-                            throw new Exception("Parameters missing", 400);
-                        }
-                        if (empty($id)) {
-                            throw new Exception("Parameters cannot be empty", 400);
-                        }
-
                         try {
                             $patientController = new PatientController();
                             $conditionsController = new ConditionController();
@@ -63,13 +69,6 @@ switch ($method) {
                     break;
                 case "condition":
                     if ($_SESSION["userRole"] === User::PATIENT || $_SESSION["userRole"] === User::DOCTOR) {
-                        if (!isset($id)) {
-                            throw new Exception("Parameters missing", 400);
-                        }
-                        if (empty($id)) {
-                            throw new Exception("Parameters cannot be empty", 400);
-                        }
-
                         try {
                             $conditionController = new ConditionController();
                             $conditions = $conditionController->getByPatient((int)$id);
@@ -92,13 +91,6 @@ switch ($method) {
                     break;
                 case "appointments":
                     if ($_SESSION["userRole"] === User::PATIENT) {
-                        if (!isset($id)) {
-                            throw new Exception("Parameters missing", 400);
-                        }
-                        if (empty($id)) {
-                            throw new Exception("Parameters cannot be empty", 400);
-                        }
-
                         try {
                             $controller = new AppointmentController();
                             $patientController = new PatientController();
@@ -165,11 +157,22 @@ switch ($method) {
                         throw new InvalidArgumentException("Invalid gender ", 400);
                     }
 
-                    $birthdate = new DateTime($birthdate);
-
-                    $newPatient = new Patient(0, $lname, $fname, $phone, $email, $pass, $gender, $birthdate, $address);
+                    $fname = htmlspecialchars(strip_tags($fname));
+                    $lname = htmlspecialchars(strip_tags($lname));
+                    $phone = htmlspecialchars(strip_tags($phone));
+                    $email = htmlspecialchars(strip_tags($email));
+                    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        throw new Exception("Invalid email", 400);
+                    }
+                    $pass = strip_tags($pass);
+                    $birthdate = htmlspecialchars(strip_tags($birthdate));
+                    $address = htmlspecialchars(strip_tags($address));
 
                     try {
+                        $birthdate = new DateTime($birthdate);
+
+                        $newPatient = new Patient(0, $lname, $fname, $phone, $email, $pass, $gender, $birthdate, $address);
+
                         $controller = new PatientController();
                         $controller->newRecord($newPatient);
                         AuditGenerator::genarateLog("root", "Create patient", Outcome::SUCCESS);
@@ -186,6 +189,11 @@ switch ($method) {
                         }
                         if (empty($id)) {
                             throw new Exception("Parameters cannot be empty", 400);
+                        }
+
+                        $id = htmlspecialchars(strip_tags($id));
+                        if (!filter_var($id, FILTER_VALIDATE_INT)) {
+                            throw new Exception("Invalid patient ID", 400);
                         }
 
                         try {
@@ -244,6 +252,11 @@ switch ($method) {
                             throw new Exception("Parameters cannot be empty", 400);
                         }
 
+                        $id = htmlspecialchars(strip_tags($id));
+                        if (!filter_var($id, FILTER_VALIDATE_INT)) {
+                            throw new Exception("Invalid patient ID", 400);
+                        }
+
                         try {
                             $controller = new PatientController();
                             $patient = $controller->getById((int)$id);
@@ -271,8 +284,14 @@ switch ($method) {
                             throw new Exception("Parameters cannot be empty", 400);
                         }
 
+                        $patientId = htmlspecialchars(strip_tags($patientId));
+                        if (!filter_var($patientId, FILTER_VALIDATE_INT)) {
+                            throw new Exception("Invalid patientID");
+                        }
+
                         $symptomsArr = [];
                         foreach ($symptoms as $symptom) {
+                            $symptom = htmlspecialchars(strip_tags($symptom));
                             $symptomsArr[] = new Symptom(0, $symptom);
                         }
 
