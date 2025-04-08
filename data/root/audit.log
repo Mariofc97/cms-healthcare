@@ -88,3 +88,5 @@ Action: Adding Diagnosis, Outcome: Success
 Action: Adding Diagnosis, Outcome: Success
 [2025-04-08 21:02:52] IP: 127.0.0.1, Port: 53686
 Action: Adding Diagnosis, Outcome: Success
+[2025-04-08 20:25:35] IP: ::1, Port: 51766
+Action: Add Staff, Outcome: Success

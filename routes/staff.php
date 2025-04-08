@@ -24,9 +24,9 @@ switch ($method) {
     $password = $_POST["pass"] ?? null;
     
     //update staff member's info, delete staff
-    if(in_array("update", $path) || in_array("delete", $path) ){ 
-      $id = $_POST["id"] ?? null;
-      if(!isset($id) || empty($id)){
+    if (in_array("update", $path) || in_array("delete", $path)) {
+      $id = filter_var($_POST["id"]) ?? null;
+      if (!isset($id) || empty($id)) {
         throw new Exception("User ID is missing", 400);
       }
       $id = filter_var($_POST["id"]) ?? null;
@@ -61,7 +61,7 @@ switch ($method) {
           echo json_encode("Staff updated successfully");
         } catch (Exception $e) {
           AuditGenerator::genarateLog("root", "Update Staff", Outcome::ERROR);
-          throw new Exception("Error getting staff information." . $e->getMessage(), 500); //500 Internal Server Error, server error response status code
+          throw new Exception("Error updating staff information." . $e->getMessage(), 500); //500 Internal Server Error, server error response status code
         }
       } elseif (in_array("delete", $path)) {  //delete(deactivate) staff
         try {
@@ -70,7 +70,7 @@ switch ($method) {
           echo json_encode("Staff deleted successfully");
         } catch (Exception $e) {
           AuditGenerator::genarateLog("root", "Delete Staff", Outcome::ERROR);
-          throw new Exception("Error getting staff information." . $e->getMessage(), 500);
+          throw new Exception("Error deleting staff information." . $e->getMessage(), 500);
         }
       }
 
@@ -95,7 +95,11 @@ switch ($method) {
         AuditGenerator::genarateLog("root", "Add new Staff", outcome::SUCCESS);
       } catch (Exception $e) {
         AuditGenerator::genarateLog("root", "Add new Staff", outcome::ERROR);
-        throw new Exception("Error Add new staff. " . $e->getMessage(), 500);
+        throw new Exception("Error add new staff. " . $e->getMessage(), 500);
+        AuditGenerator::genarateLog("root", "Add Staff", outcome::SUCCESS);
+      } catch (Exception $e) {
+        AuditGenerator::genarateLog("root", "Add Staff", outcome::ERROR);
+        throw new Exception("Error adding staff." . $e->getMessage(), 500);
       }
     }
     break;
