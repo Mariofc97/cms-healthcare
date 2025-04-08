@@ -1,12 +1,12 @@
 <?php
 ini_set('display_errors', 1); 
 
-use audit\AuditGenerator;
-use audit\Outcome;
-use models\Staff;
-use models\User;
+use audit\AuditGenerator; //Import AuditGenerator class from the 'audit' namespace(Audit.php)
+use audit\Outcome; // Import Outcome enum(enumeration) from the 'audit' namespace
+use models\Staff; //Import Staff class from the 'models' namespace(User.php)
+use models\User; //Import User class from the 'models' namespace(User.php)
 
-require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/User.php';  // Load User.php using an absolute path based on the current directory
 require_once __DIR__ . '/../models/Audit.php';
 require_once __DIR__ . '/../controllers/contentController.php';
 
@@ -17,15 +17,15 @@ $path = explode("/", $requestUri);
 
 switch ($method) {
   case "POST":
-    $fname = $_POST["fname"] ?? null;
-    $lname = $_POST["lname"] ?? null;
-    $phone = $_POST["phone"] ?? null;
-    $email = $_POST["email"] ?? null;
-    $password = $_POST["pass"] ?? null;
+    $fname = htmlspecialchars(strip_tags($_POST["fname"])) ?? null;// Get the 'fname' parameter from the URL, sanitize and assign it to $fname
+    $lname = htmlspecialchars(strip_tags($_POST["lname"])) ?? null;
+    $phone = htmlspecialchars(strip_tags($_POST["phone"])) ?? null;
+    $email = htmlspecialchars(strip_tags($_POST["email"])) ?? null;
+    $password = password_hash(strip_tags($_POST["pass"]),PASSWORD_DEFAULT,['cost'=>10]) ?? null; //Sanitize and convert the password into a hashed value
     
     //update staff member's info, delete staff
     if(in_array("update", $path) || in_array("delete", $path) ){ 
-      $id = $_POST["id"] ?? null;
+      $id = filter_var($_POST["id"]) ?? null;
       if(!isset($id) || empty($id)){
         throw new Exception("User ID is missing", 400);
       }
