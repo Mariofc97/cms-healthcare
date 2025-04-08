@@ -25,7 +25,7 @@ switch ($method) {
     
     //update staff member's info, delete staff
     if (in_array("update", $path) || in_array("delete", $path)) {
-      $id = filter_var($_POST["id"]) ?? null;
+      $id = $_POST["id"] ?? null;
       if (!isset($id) || empty($id)) {
         throw new Exception("User ID is missing", 400);
       }
