@@ -171,6 +171,7 @@ class Diagnosis implements AppItem, JsonSerializable
     private string $description;
     private int $apppointment;
     private array $prescriptions;
+    private array $prescriptions;
 
     public function __construct(int $id, string $description, int $apppointment, array $prescriptions = [])
     {

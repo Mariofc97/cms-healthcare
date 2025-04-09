@@ -1,0 +1,104 @@
+[2025-04-06 17:51:16] IP: 127.0.0.1, Port: 60631
+Action: Get Diagnoses, Outcome: Error
+[2025-04-06 17:52:07] IP: 127.0.0.1, Port: 60645
+Action: Get Diagnoses, Outcome: Success
+[2025-04-06 17:58:29] IP: 127.0.0.1, Port: 60705
+Action: Get Diagnoses, Outcome: Success
+[2025-04-06 17:58:54] IP: 127.0.0.1, Port: 60718
+Action: Adding Diagnosis, Outcome: Success
+[2025-04-06 20:04:24] IP: 127.0.0.1, Port: 62378
+Action: Get Diagnoses, Outcome: Success
+[2025-04-06 21:23:23] IP: 127.0.0.1, Port: 63421
+Action: Get Diagnoses, Outcome: Success
+[2025-04-06 21:26:21] IP: 127.0.0.1, Port: 63479
+Action: Adding Diagnosis, Outcome: Success
+[2025-04-06 21:26:48] IP: 127.0.0.1, Port: 63504
+Action: Adding Diagnosis, Outcome: Success
+[2025-04-06 21:27:04] IP: 127.0.0.1, Port: 63521
+Action: Adding Diagnosis, Outcome: Success
+[2025-04-06 21:28:30] IP: 127.0.0.1, Port: 63554
+Action: Adding Diagnosis, Outcome: Success
+[2025-04-08 00:09:58] IP: ::1, Port: 53594
+Action: Delete Staff, Outcome: Error
+[2025-04-08 00:10:01] IP: ::1, Port: 53598
+Action: Delete Staff, Outcome: Error
+[2025-04-08 00:10:32] IP: ::1, Port: 53604
+Action: Delete Staff, Outcome: Error
+[2025-04-08 00:10:49] IP: ::1, Port: 53610
+Action: Delete Staff, Outcome: Error
+[2025-04-08 00:11:26] IP: ::1, Port: 53617
+Action: Delete Staff, Outcome: Error
+[2025-04-08 00:11:41] IP: ::1, Port: 53622
+Action: Delete Staff, Outcome: Error
+[2025-04-08 00:12:00] IP: ::1, Port: 53626
+Action: Delete Staff, Outcome: Error
+[2025-04-08 00:12:02] IP: ::1, Port: 53630
+Action: Delete Staff, Outcome: Error
+[2025-04-08 00:12:11] IP: ::1, Port: 53633
+Action: Delete Staff, Outcome: Error
+[2025-04-08 20:02:15] IP: 127.0.0.1, Port: 52813
+Action: Delete Staff, Outcome: Success
+[2025-04-08 20:05:47] IP: 127.0.0.1, Port: 52857
+Action: Delete Staff, Outcome: Success
+[2025-04-08 20:06:42] IP: 127.0.0.1, Port: 52866
+Action: Delete Staff, Outcome: Error
+[2025-04-08 20:10:08] IP: 127.0.0.1, Port: 52896
+Action: Delete Staff, Outcome: Error
+[2025-04-08 20:13:26] IP: 127.0.0.1, Port: 52922
+Action: Add new Staff, Outcome: Success
+[2025-04-08 20:13:44] IP: 127.0.0.1, Port: 52930
+Action: Delete Staff, Outcome: Error
+[2025-04-08 20:14:05] IP: 127.0.0.1, Port: 52938
+Action: Add new Staff, Outcome: Success
+[2025-04-08 20:44:48] IP: 127.0.0.1, Port: 53231
+Action: Add new Staff, Outcome: Success
+[2025-04-08 20:47:15] IP: 127.0.0.1, Port: 53266
+Action: Delete Staff, Outcome: Error
+[2025-04-08 20:47:52] IP: 127.0.0.1, Port: 53284
+Action: Add new Staff, Outcome: Error
+[2025-04-08 20:48:22] IP: 127.0.0.1, Port: 53300
+Action: Add new Staff, Outcome: Success
+[2025-04-08 20:49:25] IP: 127.0.0.1, Port: 53327
+Action: Update Staff, Outcome: Success
+[2025-04-08 20:50:21] IP: 127.0.0.1, Port: 53346
+Action: Update Staff, Outcome: Success
+[2025-04-08 20:50:54] IP: 127.0.0.1, Port: 53371
+Action: Update Staff, Outcome: Success
+[2025-04-08 20:51:29] IP: 127.0.0.1, Port: 53395
+Action: Delete Staff, Outcome: Success
+[2025-04-08 20:51:51] IP: 127.0.0.1, Port: 53416
+Action: Delete Staff, Outcome: Success
+[2025-04-08 20:52:50] IP: 127.0.0.1, Port: 53438
+Action: Delete Staff, Outcome: Success
+[2025-04-08 20:53:00] IP: 127.0.0.1, Port: 53445
+Action: Update Staff, Outcome: Error
+[2025-04-08 20:53:17] IP: 127.0.0.1, Port: 53463
+Action: Update Staff, Outcome: Success
+[2025-04-08 20:53:50] IP: 127.0.0.1, Port: 53488
+Action: Update Staff, Outcome: Success
+[2025-04-08 20:55:16] IP: 127.0.0.1, Port: 53539
+Action: Get Diagnoses, Outcome: Success
+[2025-04-08 20:55:45] IP: 127.0.0.1, Port: 53554
+Action: Get Diagnoses, Outcome: Error
+[2025-04-08 20:57:11] IP: 127.0.0.1, Port: 53580
+Action: Adding Diagnosis, Outcome: Success
+[2025-04-08 21:01:07] IP: 127.0.0.1, Port: 53636
+Action: Adding Diagnosis, Outcome: Success
+[2025-04-08 21:01:38] IP: 127.0.0.1, Port: 53652
+Action: Adding Diagnosis, Outcome: Success
+[2025-04-08 21:02:52] IP: 127.0.0.1, Port: 53686
+Action: Adding Diagnosis, Outcome: Success
+[2025-04-08 20:25:35] IP: ::1, Port: 51766
+Action: Add Staff, Outcome: Success
+[2025-04-08 21:31:32] IP: 127.0.0.1, Port: 53986
+Action: Adding Diagnosis, Outcome: Success
+[2025-04-08 21:31:50] IP: 127.0.0.1, Port: 54007
+Action: Adding Diagnosis, Outcome: Success
+[2025-04-08 21:32:06] IP: 127.0.0.1, Port: 54026
+Action: Get Diagnoses, Outcome: Error
+[2025-04-08 21:32:39] IP: 127.0.0.1, Port: 54039
+Action: Get Diagnoses, Outcome: Success
+[2025-04-08 21:34:26] IP: 127.0.0.1, Port: 54077
+Action: Add New Staff, Outcome: Success
+[2025-04-08 21:36:45] IP: 127.0.0.1, Port: 54132
+Action: Update Staff, Outcome: Success

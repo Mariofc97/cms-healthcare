@@ -8,8 +8,8 @@ use models\MedicalRecord;
 use models\Patient;
 use models\Staff;
 use models\Symptom;
-use models\User;
 use models\Diagnosis;
+use models\User;
 use models\Doctor;
 
 require_once __DIR__ . "/../config/webConfig.php";
@@ -157,7 +157,22 @@ class StaffController extends ApplicationController
 {
     public function getById(int $id): Staff
     {
-        return new Staff(1, "Steve", "Admin", "66678887", 'admin@example.com', '1234', User::STAFF);
+        $sql = "SELECT * FROM USER_TB WHERE User_ID = ? AND Type = ? AND Activated = 1";
+        $stmt = $this->dbConnection->prepare($sql);
+        $type = User::STAFF;
+        $stmt->bind_param('ii', $id, $type);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+        $result = $stmt->get_result();
+        $result = $result->fetch_assoc();
+
+        if ($result) {
+            return new Staff($result["User_ID"], $result["Fname"], $result["Lname"], $result["Phone"], $result["Email"], $result["Pass"], User::STAFF);
+        } else {
+            throw new Exception("Staff not found with ID $id");
+        }
     }
 
     public function getAll(): array
@@ -185,8 +200,32 @@ class StaffController extends ApplicationController
         }
     }
 
-    public function updateRecord(AppItem $updatedItem): bool
+    public function updateRecord(Staff $updatedItem): bool
     {
+        $id = $updatedItem->getId();  //User.php > Staff
+        $fname = $updatedItem->getFname();
+        $lname = $updatedItem->getLname();
+        $phone = $updatedItem->getPhone();
+        $email = $updatedItem->getEmail();
+        $password = $updatedItem->getPassword();
+
+        $sql = "UPDATE USER_TB SET Fname=?, Lname=?, Phone=?, Email=?, Pass=? WHERE User_ID=?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param('sssssi', $fname, $lname, $phone, $email, $password, $id);
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+        return true;
+    }
+
+    public function deleteStaff(int $id): bool
+    {
+        $sql = "UPDATE USER_TB SET Activated=0 WHERE User_ID=?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param('i', $id);
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
         return true;
     }
 }
@@ -419,7 +458,7 @@ class DiagnosisController extends ApplicationController
         $stmt->bind_param('i', $id);
 
         if (!$stmt->execute()) {
-            throw new Exception("Execution failed: " . $this->dbConnection->error, 500);
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
         }
         $result = $stmt->get_result();
         $result = $result->fetch_assoc();
@@ -427,33 +466,24 @@ class DiagnosisController extends ApplicationController
         if ($result) {
             return new Diagnosis($result["Diagnosis_ID"], $result["Description"], $result["Appointment_ID"]);
         } else {
-            throw new Exception("Diagnosis not found with ID $id", 404);
+            throw new Exception("Diagnosis not found with ID $id");
         }
     }
 
-    public function getByCondition(int $conditionId): array
+    public function newRecord(Diagnosis $newRecord): bool //Content.php
     {
-        $sql = "SELECT Diagnosis_ID, Description, diagnosis.Appointment_ID FROM
-        diagnosis INNER JOIN appointment
-        ON diagnosis.Appointment_ID = appointment.Appointment_ID
-        INNER JOIN pt_condition
-        ON appointment.Condition_ID = pt_condition.Condition_ID
-        WHERE pt_condition.Condition_ID = ?";
-
+        $description = $newRecord->getDescription();
+        $appointmentid = $newRecord->getApppointment();
+        // var_dump($description, $appointmentid);
+        $sql = "INSERT INTO DIAGNOSIS(Description, Appointment_ID) VALUES(?, ?)";
         $stmt = $this->dbConnection->prepare($sql);
-        $stmt->bind_param("i", $conditionId);
+        $stmt->bind_param('si', $description, $appointmentid);
 
-        if (!$stmt->execute()) {
-            throw new Exception("Execution failed: " . $this->dbConnection->error, 500);
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
         }
-        $result = $stmt->get_result();
-
-        $diagnoses = [];
-        while ($diagnosis = $result->fetch_assoc()) {
-            $diagnoses[] = new Diagnosis($diagnosis["Diagnosis_ID"], $diagnosis["Description"], $diagnosis["Appointment_ID"]);
-        }
-
-        return $diagnoses;
     }
 }
 
@@ -472,7 +502,7 @@ class PrescriptionController extends ApplicationController
         $stmt->bind_param("i", $diagnosisID);
 
         if (!$stmt->execute()) {
-            throw new Exception($this->dbConnection->error, 404);
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
         }
 
         $prescriptions = [];
@@ -480,7 +510,7 @@ class PrescriptionController extends ApplicationController
         $result = $stmt->get_result();
 
         if (!$result) {
-            throw new Exception("Diagnosis not found with ID $diagnosisID", 404);
+            throw new Exception("Diagnosis not found with ID $diagnosisID");
         }
 
         while ($prescription = $result->fetch_assoc()) {
