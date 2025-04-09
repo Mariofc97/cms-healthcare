@@ -20,6 +20,7 @@ class AuthController extends ApplicationController
             if (password_verify($password, $hashedPass)) {
                 session_start();
                 $_SESSION["userInfo"] = $result;
+                $_SESSION["LAST_ACTIVITY"] = time();
                 return true;
             } else {
                 return false;
