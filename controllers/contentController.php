@@ -11,6 +11,7 @@ use models\Symptom;
 use models\User;
 use models\Diagnosis;
 use models\Doctor;
+use models\Prescription;
 
 require_once __DIR__ . "/../config/webConfig.php";
 
@@ -173,18 +174,18 @@ class DoctorController extends ApplicationController {
         }
     }
 
-    public function doctorExistsByName(string $fname, string $lname): bool {
-        $sql = "SELECT 1 FROM user_tb WHERE Fname = ? AND Lname = ? AND Type = ?";
+    public function doctorExistsByEmail(string $email): bool {
+        $sql = "SELECT 1 FROM user_tb WHERE email = ? AND Type = ?";
         $stmt = $this->dbConnection->prepare($sql);
         $type = User::DOCTOR;
-        $stmt->bind_param("ssi", $fname, $lname, $type);
+        $stmt->bind_param("si", $email, $type);
     
         if (!$stmt->execute()) {
             throw new Exception("Failed to check doctor existence: " . $this->dbConnection->error);
         }
     
-        $result = $stmt->get_result()->fetch_assoc();
-        return $result ? true : false;
+        $result = $stmt->get_result();
+        return ($result->num_rows > 0);
     }
 
     public function newRecord(Doctor $doctor): bool {
@@ -601,4 +602,50 @@ class PrescriptionController extends ApplicationController
 
         return $prescriptions;
     }
+
+    public function newRecord(Prescription $prescription, int $doctorId, int $diagnosisId): bool {
+        
+        $medicine = $prescription->getMedicine();
+        $dosage = $prescription->getDosage();
+
+        $sql = "INSERT INTO prescription (Medicine, Dosage) VALUES (?, ?) ";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("ss",$medicine,$dosage);
+
+        if($stmt->execute() === true) {
+            echo "Inserting prescription with success.";
+
+        } else {
+            throw new Exception("Error inserting prescription: " . $this->dbConnection->error);
+        }
+
+        $prescriptionId = $this->dbConnection->insert_id;
+
+        $sql = "INSERT INTO prescribe_rel (Doctor_ID, Diagnosis_ID, Prescription_ID) VALUES (?,?,?)";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("iii", $doctorId, $diagnosisId, $prescriptionId);
+
+        if($stmt->execute() === true) {
+            echo "Prescription linked with success";
+        }else {
+            throw new Exception("Error linking prescription: " . $this->dbConnection->error);
+        }
+    }
+
+    public function updateRecord(Prescription $prescription): bool {
+        $sql = "UPDATE prescription SET Medicine = ?, Dosage = ? WHERE Prescription_ID = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("ssi", $medicine, $dosage, $id);
+
+        $medicine = $prescription->getMedicine();
+        $dosage = $prescription->getDosage();
+        $id = $prescription->getId();
+
+        if($stmt->execute() === true) {
+            echo "Prescription update correctly";
+        } else {
+            throw new Exception("Error updating prescription: " . $this->dbConnection->error);
+        }
+    }
+
 }

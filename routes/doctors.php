@@ -57,8 +57,8 @@ switch ($method) {
                         throw new Exception("Missing required fields", 400);
                     }
 
-                    if ($controller->doctorExistsByName($fname, $lname)) {
-                        throw new Exception("Doctor with the same name already exists", 404);
+                    if ($controller->doctorExistsByEmail($email)) {
+                        throw new Exception("Some error occured", 409);
                     }
 
                     $newDoctor = new Doctor(0, $fname, $lname, $phone, $email, $pass, $specialty);
