@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 require_once __DIR__ . "/../config/webConfig.php";
 require_once __DIR__ . "/contentController.php";
 
@@ -20,8 +18,8 @@ class AuthController extends ApplicationController
             $email = $result["Email"];
             $hashedPass = $result["Pass"];
             if (password_verify($password, $hashedPass)) {
-                $_SESSION["userEmail"] = $email;
-                $_SESSION["userRole"] = $result["Type"];
+                session_start();
+                $_SESSION["userInfo"] = $result;
                 return true;
             } else {
                 return false;

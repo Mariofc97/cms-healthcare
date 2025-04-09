@@ -7,7 +7,7 @@ use audit\AuditGenerator;
 use audit\Outcome;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (!isset($_SESSION["userEmail"])) {
+    if (!isset($_SESSION["userInfo"])) {
         $email = $_POST["email"] ?? null;
         $password = $_POST["password"] ?? null;
 
@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $controller = new AuthController();
             if ($controller->authUser($email, $password)) {
                 AuditGenerator::genarateLog($email, "Log in", Outcome::SUCCESS);
-                echo json_encode("Successfully logged in!");
+                echo json_encode("Successfully logged in with id: " . session_id());
             } else {
                 AuditGenerator::genarateLog($email, "Log in", Outcome::ERROR);
                 echo json_encode("Login failed");

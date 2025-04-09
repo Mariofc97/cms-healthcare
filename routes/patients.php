@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-session_start();
 require_once __DIR__ . '/../models/Content.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Audit.php';
@@ -23,9 +22,11 @@ $subResource = $requestSegments[1] ?? "";
 
 $method = $_SERVER["REQUEST_METHOD"];
 
+session_start();
+
 switch ($method) {
     case "GET":
-        if (isset($_SESSION["userEmail"])) {
+        if (isset($_SESSION["userInfo"])) {
             $id = $_GET["patientID"] ?? null;
 
             if (!isset($id)) {
@@ -42,7 +43,7 @@ switch ($method) {
 
             switch ($subResource) {
                 case "medical-record":
-                    if ($_SESSION["userRole"] === User::PATIENT || $_SESSION["userRole"] === User::DOCTOR) {
+                    if ($_SESSION["userInfo"]["Type"] === User::PATIENT || $_SESSION["userInfo"]["Type"] === User::DOCTOR) {
                         try {
                             $patientController = new PatientController();
                             $conditionsController = new ConditionController();
@@ -60,7 +61,7 @@ switch ($method) {
                             $medicalRecord = new MedicalRecord($patient, $patientConditions);
                             echo json_encode($medicalRecord);
                         } catch (Exception $e) {
-                            AuditGenerator::genarateLog($_SESSION["userEmail"], "Get Medical Record", Outcome::ERROR);
+                            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Get Medical Record", Outcome::ERROR);
                             throw new Exception("Error getting patient's medical record: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
@@ -68,7 +69,7 @@ switch ($method) {
                     }
                     break;
                 case "condition":
-                    if ($_SESSION["userRole"] === User::PATIENT || $_SESSION["userRole"] === User::DOCTOR) {
+                    if ($_SESSION["userInfo"]["Type"] === User::PATIENT || $_SESSION["userInfo"]["Type"] === User::DOCTOR) {
                         try {
                             $conditionController = new ConditionController();
                             $conditions = $conditionController->getByPatient((int)$id);
@@ -82,7 +83,7 @@ switch ($method) {
                                 echo json_encode("Patient doesn't have any conditions");
                             }
                         } catch (Exception $e) {
-                            AuditGenerator::genarateLog($_SESSION["userEmail"], "Get patient latest condition", Outcome::ERROR);
+                            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Get patient latest condition", Outcome::ERROR);
                             throw new Exception("Error getting patient's latest condition: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
@@ -90,7 +91,7 @@ switch ($method) {
                     }
                     break;
                 case "appointments":
-                    if ($_SESSION["userRole"] === User::PATIENT) {
+                    if ($_SESSION["userInfo"]["Type"] === User::PATIENT) {
                         try {
                             $controller = new AppointmentController();
                             $patientController = new PatientController();
@@ -103,10 +104,10 @@ switch ($method) {
                                 $detailedAppointments[] = new DetailedAppointment($doctor, $appointment);
                             }
 
-                            AuditGenerator::genarateLog($_SESSION["userEmail"], "Get Appointments", Outcome::SUCCESS);
+                            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Get Appointments", Outcome::SUCCESS);
                             echo json_encode($detailedAppointments);
                         } catch (Exception $e) {
-                            AuditGenerator::genarateLog($_SESSION["userEmail"], "Get Appointments", Outcome::ERROR);
+                            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Get Appointments", Outcome::ERROR);
                             throw new Exception("Error getting patient appointments: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
@@ -121,7 +122,7 @@ switch ($method) {
         }
         break;
     case "POST":
-        if (isset($_SESSION["userEmail"]) || $subResource === "") {
+        if (isset($_SESSION["userInfo"]["Email"]) || $subResource === "") {
             $id = $_POST["patientID"] ?? null;
             $fname = $_POST["fname"] ?? null;
             $lname = $_POST["lname"] ?? null;
@@ -183,7 +184,7 @@ switch ($method) {
                     }
                     break;
                 case "update":
-                    if ($_SESSION["userRole"] === User::PATIENT || $_SESSION["userRole"] === User::STAFF) {
+                    if ($_SESSION["userInfo"]["Type"] === User::PATIENT || $_SESSION["userInfo"]["Type"] === User::STAFF) {
                         if (!isset($id)) {
                             throw new Exception("Parameters missing", 400);
                         }
@@ -233,10 +234,10 @@ switch ($method) {
                             }
 
                             $controller->updateRecord($patient);
-                            AuditGenerator::genarateLog($_SESSION["userEmail"], "Update patient", Outcome::SUCCESS);
+                            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update patient", Outcome::SUCCESS);
                             echo json_encode("Patient updated successfully");
                         } catch (Exception $e) {
-                            AuditGenerator::genarateLog($_SESSION["userEmail"], "Update patient", Outcome::ERROR);
+                            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update patient", Outcome::ERROR);
                             throw new Exception("Error updating patient: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
@@ -244,7 +245,7 @@ switch ($method) {
                     }
                     break;
                 case "delete":
-                    if ($_SESSION["userRole"] === User::STAFF) {
+                    if ($_SESSION["userInfo"]["Type"] === User::STAFF) {
                         if (!isset($id)) {
                             throw new Exception("Parameters missing", 400);
                         }
@@ -261,10 +262,10 @@ switch ($method) {
                             $controller = new PatientController();
                             $patient = $controller->getById((int)$id);
                             $controller->deleteRecord((int)$id);
-                            AuditGenerator::genarateLog($_SESSION["userEmail"], "Delete patient", Outcome::SUCCESS);
+                            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete patient", Outcome::SUCCESS);
                             echo json_encode("Patient deleted successfully");
                         } catch (Exception $e) {
-                            AuditGenerator::genarateLog($_SESSION["userEmail"], "Delete patient", Outcome::ERROR);
+                            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete patient", Outcome::ERROR);
                             throw new Exception("Error deleting patient: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
@@ -272,7 +273,7 @@ switch ($method) {
                     }
                     break;
                 case "condition":
-                    if ($_SESSION["userRole"] === User::PATIENT || $_SESSION["userRole"] === User::DOCTOR) {
+                    if ($_SESSION["userInfo"]["Type"] === User::PATIENT || $_SESSION["userInfo"]["Type"] === User::DOCTOR) {
 
                         $patientId = $_POST["patientID"] ?? null;
                         $symptoms = $_POST["symptoms"] ?? [];
@@ -299,9 +300,9 @@ switch ($method) {
                             $controller = new ConditionController();
                             $condition = new Condition(0, new DateTime(), (int)$patientId, $symptomsArr);
                             $controller->newRecord($condition);
-                            AuditGenerator::genarateLog($_SESSION["userEmail"], "Create condition", Outcome::SUCCESS);
+                            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Create condition", Outcome::SUCCESS);
                         } catch (Exception $e) {
-                            AuditGenerator::genarateLog($_SESSION["userEmail"], "Create condition", Outcome::ERROR);
+                            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Create condition", Outcome::ERROR);
                             throw new Exception("Error creating condition: " . $e->getMessage(), $e->getCode());
                         }
                     } else {
