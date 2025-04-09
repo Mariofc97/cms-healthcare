@@ -1,2 +1,22 @@
 [2025-04-09 05:10:38] IP: ::1, Port: 59214
 Action: Log in, Outcome: Success
+[2025-04-09 05:20:35] IP: ::1, Port: 59271
+Action: Log in, Outcome: Success
+[2025-04-09 05:23:45] IP: ::1, Port: 59325
+Action: Update patient, Outcome: Success
+[2025-04-09 05:25:05] IP: ::1, Port: 59396
+Action: Log in, Outcome: Success
+[2025-04-09 05:25:09] IP: ::1, Port: 59396
+Action: Delete patient, Outcome: Success
+[2025-04-09 05:25:23] IP: ::1, Port: 59429
+Action: Update patient, Outcome: Error
+[2025-04-09 05:25:57] IP: ::1, Port: 59454
+Action: Log in, Outcome: Success
+[2025-04-09 05:26:02] IP: ::1, Port: 59454
+Action: Get Medical Record, Outcome: Error
+[2025-04-09 05:26:32] IP: ::1, Port: 59475
+Action: Get Appointments, Outcome: Success
+[2025-04-09 05:27:32] IP: ::1, Port: 59497
+Action: Create condition, Outcome: Success
+[2025-04-09 05:28:17] IP: ::1, Port: 59519
+Action: Get Appointments, Outcome: Success

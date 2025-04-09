@@ -102,3 +102,17 @@ Action: Get Diagnoses, Outcome: Success
 Action: Add New Staff, Outcome: Success
 [2025-04-08 21:36:45] IP: 127.0.0.1, Port: 54132
 Action: Update Staff, Outcome: Success
+[2025-04-09 05:20:47] IP: ::1, Port: 59275
+Action: Create patient, Outcome: Success
+[2025-04-09 05:31:55] IP: ::1, Port: 59541
+Action: Add New Staff, Outcome: Success
+[2025-04-09 05:34:44] IP: ::1, Port: 59564
+Action: Update Staff, Outcome: Error
+[2025-04-09 05:34:59] IP: ::1, Port: 59568
+Action: Update Staff, Outcome: Success
+[2025-04-09 05:35:14] IP: ::1, Port: 59590
+Action: Delete Staff, Outcome: Success
+[2025-04-09 05:39:34] IP: ::1, Port: 59637
+Action: Get Diagnoses, Outcome: Success
+[2025-04-09 05:41:47] IP: ::1, Port: 59678
+Action: Adding Diagnosis, Outcome: Success
