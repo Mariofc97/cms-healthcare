@@ -12,6 +12,8 @@ try {
 
     if ($resource === "login") {
         require_once "./routes/login.php";
+    } elseif ($resource === "logout") {
+        require_once "./routes/logout.php";
     } else {
         if (!isset($_REQUEST["sid"])) {
             throw new Exception("Session ID missing", 400);
