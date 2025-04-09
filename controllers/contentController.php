@@ -64,11 +64,6 @@ class PatientController extends ApplicationController
         } else throw new Exception("Patient not found with ID $id");
     }
 
-    public function getAll(int $id): array
-    {
-        return array();
-    }
-
     public function newRecord(Patient $newRecord): bool
     {
         $fname = $newRecord->getFname();
@@ -151,6 +146,39 @@ class PatientController extends ApplicationController
         } else {
             throw new Exception($this->dbConnection->error, 500);
         }
+    }
+
+    public function getByCondition(int $conditionId)
+    {
+        $sql = "SELECT * FROM pt_condition INNER JOIN patient
+        ON pt_condition.Patient_ID = patient.Patient_ID
+        INNER JOIN user_tb
+        ON patient.Patient_ID = user_tb.User_ID
+        WHERE pt_condition.Condition_ID = ?";
+
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $conditionId);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error);
+        }
+
+        $result = $stmt->get_result();
+        $result = $result->fetch_assoc();
+        if ($result) {
+            $result["Gender"] = ($result["Gender"] === "F") ? Gender::FEMALE : Gender::MALE;
+            return new Patient(
+                $result["User_ID"],
+                $result["Lname"],
+                $result["Fname"],
+                $result["Phone"],
+                $result["Email"],
+                $result["Pass"],
+                $result["Gender"],
+                new DateTime($result["Birthdate"]),
+                $result["Address"]
+            );
+        } else throw new Exception("Condition not found with ID $conditionId", 404);
     }
 }
 
@@ -577,6 +605,31 @@ class ConditionController extends ApplicationController
         }
 
         return $symptoms;
+    }
+
+    public function getByDiagnosis(int $diagnosisId): Condition
+    {
+        $sql = "SELECT pt_condition.Condition_ID, pt_condition.StartDate, pt_condition.Patient_ID FROM
+        diagnosis INNER JOIN appointment
+        ON diagnosis.Appointment_ID = appointment.Appointment_ID
+        INNER JOIN pt_condition
+        ON appointment.Condition_ID = pt_condition.Condition_ID
+        WHERE diagnosis.Diagnosis_ID = ?";
+
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $diagnosisId);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error, 500);
+        }
+
+        $result = $stmt->get_result();
+        $result = $result->fetch_assoc();
+        if ($result) {
+            return new Condition($result["Condition_ID"], new DateTime($result["StartDate"]), $result["Patient_ID"]);
+        } else {
+            throw new Exception("Diagnosis not found with ID $diagnosisId", 404);
+        }
     }
 }
 

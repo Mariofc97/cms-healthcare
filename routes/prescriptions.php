@@ -46,6 +46,32 @@ try {
                 $prescription = new Prescription(0, $medicine, $dosage);
                 $controller->newRecord($prescription, (int)$doctorId, (int)$diagnosisId);
                 AuditGenerator::genarateLog("root", "Create prescription", Outcome::SUCCESS);
+
+                if (isset($_FILES["dataFile"])) {
+                    try {
+                        $conditionController = new ConditionController();
+                        $patientController = new PatientController();
+
+                        $condition = $conditionController->getByDiagnosis((int)$diagnosisId);
+                        $patient = $patientController->getByCondition($condition->getId());
+
+                        $targetDir = __DIR__ . "/../data/" . $patient->getEmail() . "/prescriptions";
+                        if (!file_exists($targetDir)) {
+                            mkdir($targetDir, 0777, true);
+                        }
+                        $targetDir .= "/" . strtolower(basename($_FILES["dataFile"]["name"]));
+                        if (move_uploaded_file($_FILES["dataFile"]["tmp_name"], $targetDir)) {
+                            AuditGenerator::genarateLog("root", "Upload file", Outcome::SUCCESS);
+                            echo json_encode(basename($_FILES["dataFile"]["name"]) . " has been uploaded.");
+                        } else {
+                            throw new Exception("Not possible to upload the file.", 500);
+                        }
+                    } catch (Exception $e) {
+                        echo json_encode("Error uploading file: " . $e->getMessage());
+                        AuditGenerator::genarateLog("root", "Upload file", Outcome::ERROR);
+                    }
+                }
+
                 echo json_encode("Prescription created with success");
                 break;
 
