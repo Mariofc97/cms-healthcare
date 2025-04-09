@@ -61,7 +61,9 @@ switch ($method) {
                         throw new Exception("Some error occured", 409);
                     }
 
-                    $newDoctor = new Doctor(0, $fname, $lname, $phone, $email, $pass, $specialty);
+                    $hashedPass = password_hash($pass, PASSWORD_DEFAULT, ['cost' => 10]);
+
+                    $newDoctor = new Doctor(0, $fname, $lname, $phone, $email, $hashedPass, $specialty);
                     $controller->newRecord($newDoctor);
 
                     AuditGenerator::genarateLog("root", "Create doctor", Outcome::SUCCESS);

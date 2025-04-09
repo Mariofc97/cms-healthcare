@@ -20,7 +20,7 @@ try {
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         switch ($subResource) {
             case "":
-                $medicine = $_POST["medicine"] ?? null;
+                $medicine = htmlspecialchars(strip_tags(trim($_POST["medicine"] ?? "")));
                 $dosage = $_POST["dosage"] ?? null;
                 $doctorId = $_POST["doctor_id"] ?? null;
                 $diagnosisId = $_POST["diagnosis_id"] ?? null;
@@ -34,7 +34,7 @@ try {
                 AuditGenerator::genarateLog("root", "Create prescription", Outcome::SUCCESS);
 
                 http_response_code(200);
-                echo json_encode(["message" => "Prescription created and linked with success"]);
+                echo json_encode("Prescription created and linked with success");
                 break;
 
             case "update":
@@ -51,7 +51,7 @@ try {
                 AuditGenerator::genarateLog("root", "Update prescription", Outcome::SUCCESS);
 
                 http_response_code(200);
-                echo json_encode(["message" => "Prescription updated with success"]);
+                echo json_encode("Prescription updated with success");
                 break;
 
             default:
@@ -61,6 +61,7 @@ try {
         throw new Exception("Invalid request method", 405);
     }
 } catch (Exception $e) {
+    AuditGenerator::genarateLog("root", "Prescription route error: " . $e->getMessage(), Outcome::ERROR);
     http_response_code($e->getCode() ?: 500);
     echo json_encode(["error" => $e->getMessage()]);
 }

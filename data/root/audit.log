@@ -232,3 +232,33 @@ Action: Delete doctor, Outcome: Success
 Action: Delete doctor, Outcome: Error
 [2025-04-08 03:52:23] IP: ::1, Port: 56000
 Action: Create doctor, Outcome: Error
+[2025-04-09 05:32:18] IP: ::1, Port: 49152
+Action: Create prescription, Outcome: Success
+[2025-04-09 05:55:53] IP: ::1, Port: 49319
+Action: Create prescription, Outcome: Success
+[2025-04-09 05:56:24] IP: ::1, Port: 49326
+Action: Create prescription, Outcome: Success
+[2025-04-09 05:56:31] IP: ::1, Port: 49330
+Action: Create prescription, Outcome: Success
+[2025-04-09 05:56:50] IP: ::1, Port: 49335
+Action: Create prescription, Outcome: Success
+[2025-04-09 06:11:38] IP: ::1, Port: 49439
+Action: Update prescription, Outcome: Success
+[2025-04-09 06:11:53] IP: ::1, Port: 49445
+Action: Update prescription, Outcome: Success
+[2025-04-09 06:23:23] IP: ::1, Port: 49542
+Action: Update prescription, Outcome: Success
+[2025-04-09 06:25:47] IP: ::1, Port: 49571
+Action: Update prescription, Outcome: Success
+[2025-04-09 06:36:40] IP: ::1, Port: 49627
+Action: Prescription route error: Prescription with ID 50 doesn't exist., Outcome: Error
+[2025-04-09 07:20:59] IP: ::1, Port: 49939
+Action: Prescription route error: Missing required fields, Outcome: Error
+[2025-04-09 07:22:39] IP: ::1, Port: 49952
+Action: Create prescription, Outcome: Success
+[2025-04-09 07:24:46] IP: ::1, Port: 49987
+Action: Create prescription, Outcome: Success
+[2025-04-09 07:27:21] IP: ::1, Port: 50039
+Action: Create prescription, Outcome: Success
+[2025-04-09 07:27:30] IP: ::1, Port: 50045
+Action: Create prescription, Outcome: Success

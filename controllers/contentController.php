@@ -605,6 +605,26 @@ class PrescriptionController extends ApplicationController
 
     public function newRecord(Prescription $prescription, int $doctorId, int $diagnosisId): bool {
         
+        $sql = "SELECT Diagnosis_ID FROM diagnosis WHERE Diagnosis_ID = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $diagnosisId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if($result->num_rows === 0){
+            throw new Exception("Diagnosis with ID $diagnosisId doesn't exist.");
+        }
+
+        $sql = "SELECT Doctor_ID FROM doctor WHERE Doctor_ID = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $doctorId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if($result->num_rows === 0){
+            throw new Exception("Doctor with ID $doctorId doesn't exist.");
+        }
+
         $medicine = $prescription->getMedicine();
         $dosage = $prescription->getDosage();
 
@@ -612,10 +632,7 @@ class PrescriptionController extends ApplicationController
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bind_param("ss",$medicine,$dosage);
 
-        if($stmt->execute() === true) {
-            echo "Inserting prescription with success.";
-
-        } else {
+        if($stmt->execute() !== true) {
             throw new Exception("Error inserting prescription: " . $this->dbConnection->error);
         }
 
@@ -625,27 +642,38 @@ class PrescriptionController extends ApplicationController
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bind_param("iii", $doctorId, $diagnosisId, $prescriptionId);
 
-        if($stmt->execute() === true) {
-            echo "Prescription linked with success";
-        }else {
+        if($stmt->execute() !== true) {
             throw new Exception("Error linking prescription: " . $this->dbConnection->error);
         }
+
+        return true;
     }
 
     public function updateRecord(Prescription $prescription): bool {
+        $id = $prescription->getId();
+        
+        $sql = "SELECT Prescription_ID FROM prescription WHERE Prescription_ID = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if($result->num_rows === 0){
+            throw new Exception("Prescription with ID $id doesn't exist.");
+        } 
+
+        $medicine = $prescription->getMedicine();
+        $dosage = $prescription->getDosage();
+
         $sql = "UPDATE prescription SET Medicine = ?, Dosage = ? WHERE Prescription_ID = ?";
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bind_param("ssi", $medicine, $dosage, $id);
 
-        $medicine = $prescription->getMedicine();
-        $dosage = $prescription->getDosage();
-        $id = $prescription->getId();
-
-        if($stmt->execute() === true) {
-            echo "Prescription update correctly";
-        } else {
+        if($stmt->execute() !== true) {
             throw new Exception("Error updating prescription: " . $this->dbConnection->error);
         }
+
+        return true;
     }
 
 }
