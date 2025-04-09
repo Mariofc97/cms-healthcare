@@ -1,22 +1,32 @@
 <?php
-session_start();
+require_once __DIR__ . "/../config/webConfig.php";
+require_once __DIR__ . "/contentController.php";
 
-use authentication as auth;
-
-$users = auth\getAllUsers();
-
-$email = $_POST['email'] ?? '';
-$email = $_POST['password'] ?? '';
-
-// ! FOR NOW CAN BE LIKE THIS, BUT AFTER THE DATABASE, THINGS WILL CHANGE
-foreach ($users as $user) {
-    if ($user->checkCredentials($email, $password)) {
-        $_SESSION['user'] = [
-            'email' => $user->getEmail(),
-            'role' => $user->getRole()
-        ];
-        header('Location: ../views/dashboard.php');
-        exit();
+class AuthController extends ApplicationController
+{
+    public function authUser(string $email, string $password): bool
+    {
+        $sql = "SELECT * FROM user_tb WHERE Email = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("s", $email);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows === 0) {
+                throw new Exception("Login failed", 404);
+            }
+            $result = $result->fetch_assoc();
+            $email = $result["Email"];
+            $hashedPass = $result["Pass"];
+            if (password_verify($password, $hashedPass)) {
+                session_start();
+                $_SESSION["userInfo"] = $result;
+                $_SESSION["LAST_ACTIVITY"] = time();
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            throw new Exception("Login failed", 400);
+        }
     }
 }
-echo "Invalid credentials";

@@ -21,6 +21,9 @@ abstract class ApplicationController
     public function __construct()
     {
         $this->dbConnection = new mysqli(DB_SERVER, DB_USERNAME, DB_PASS, DB_NAME);
+        if ($this->dbConnection->connect_error) {
+            throw new Exception("Error connecting to the database: " . $this->dbConnection->connect_error);
+        }
     }
 
     public function __destruct()
@@ -71,7 +74,17 @@ class PatientController extends ApplicationController
         $lname = $newRecord->getLname();
         $phone = $newRecord->getPhone();
         $email = $newRecord->getEmail();
-        $password = $newRecord->getPassword();
+        $password = password_hash($newRecord->getPassword(), PASSWORD_ARGON2I);
+
+        $sql = "SELECT Email FROM user_tb WHERE Email = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("s", $email);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                throw new Exception("Could not add patient with email $email", 500);
+            }
+        }
 
         $sql = "INSERT INTO user_tb(Fname, Lname, Phone, Email, Pass, Type) VALUES(?,?,?,?,?,?)";
         $stmt = $this->dbConnection->prepare($sql);
@@ -90,9 +103,9 @@ class PatientController extends ApplicationController
 
             if ($stmt->execute()) {
                 return true;
-            } else throw new Exception($this->dbConnection->error);
+            } else throw new Exception($this->dbConnection->error, 500);
         } else {
-            throw new Exception($this->dbConnection->error);
+            throw new Exception($this->dbConnection->error, 500);
         }
     }
 
@@ -118,9 +131,9 @@ class PatientController extends ApplicationController
             $stmt->bind_param("sssi", $gender, $birthdate, $address, $id);
             if ($stmt->execute()) {
                 return true;
-            } else throw new Exception($this->dbConnection->error);
+            } else throw new Exception($this->dbConnection->error, 500);
         } else {
-            throw new Exception($this->dbConnection->error);
+            throw new Exception($this->dbConnection->error, 500);
         }
     }
 
@@ -135,7 +148,7 @@ class PatientController extends ApplicationController
         if ($stmt->execute()) {
             return true;
         } else {
-            throw new Exception($this->dbConnection->error);
+            throw new Exception($this->dbConnection->error, 500);
         }
     }
 }
@@ -168,7 +181,7 @@ class StaffController extends ApplicationController
         if ($stmt->execute()) {
             return true;
         } else {
-            throw new Exception($this->dbConnection->error);
+            throw new Exception($this->dbConnection->error, 500);
         }
     }
 
@@ -187,14 +200,14 @@ class AppointmentController extends ApplicationController
         $stmt->bind_param("i", $id);
 
         if (!$stmt->execute()) {
-            throw new Exception("Execution failed: " . $this->dbConnection->error);
+            throw new Exception("Execution failed: " . $this->dbConnection->error, 500);
         }
         $result = $stmt->get_result();
         $result = $result->fetch_assoc();
 
         if ($result) {
             return new Appointment($result["Appointment_ID"], new DateTime($result["Appointment_Date"]), $result["Condition_ID"], $result["Doctor_ID"], $result["Status"]);
-        } else throw new Exception("Appointment not found with ID $id");
+        } else throw new Exception("Appointment not found with ID $id", 404);
     }
 
     public function getAll(): array
@@ -214,7 +227,7 @@ class AppointmentController extends ApplicationController
         if ($stmt->execute()) {
             return true;
         } else {
-            throw new Exception($this->dbConnection->error);
+            throw new Exception($this->dbConnection->error, 500);
         }
     }
 
@@ -231,7 +244,7 @@ class AppointmentController extends ApplicationController
         if ($stmt->execute()) {
             return true;
         } else {
-            throw new Exception($this->dbConnection->error);
+            throw new Exception($this->dbConnection->error, 500);
         }
     }
 
@@ -244,7 +257,7 @@ class AppointmentController extends ApplicationController
         if ($stmt->execute()) {
             return true;
         } else {
-            throw new Exception($this->dbConnection->error);
+            throw new Exception($this->dbConnection->error, 500);
         }
     }
 
@@ -261,7 +274,7 @@ class AppointmentController extends ApplicationController
         $stmt->bind_param("i", $patientId);
 
         if (!$stmt->execute()) {
-            throw new Exception("Execution failed: " . $this->dbConnection->error);
+            throw new Exception("Execution failed: " . $this->dbConnection->error, 500);
         }
 
         $appointments = [];
@@ -269,7 +282,7 @@ class AppointmentController extends ApplicationController
         $result = $stmt->get_result();
 
         if (!$result) {
-            throw new Exception("Appointments not found with ID $patientId");
+            throw new Exception("Appointments not found with ID $patientId", 404);
         }
 
         while ($appointment = $result->fetch_assoc()) {
@@ -309,7 +322,7 @@ class AppointmentController extends ApplicationController
                 $result["Specialty"]
             );
         } else {
-            throw new Exception($this->dbConnection->error);
+            throw new Exception($this->dbConnection->error, 500);
         }
     }
 }
@@ -334,12 +347,12 @@ class ConditionController extends ApplicationController
                 $description = $symptom->getSymptom();
                 $stmt->bind_param("is", $id, $description);
                 if (!$stmt->execute()) {
-                    throw new Exception($this->dbConnection->error);
+                    throw new Exception($this->dbConnection->error, 500);
                 }
             }
             return true;
         } else {
-            throw new Exception($this->dbConnection->error);
+            throw new Exception($this->dbConnection->error, 500);
         }
     }
 
@@ -355,7 +368,7 @@ class ConditionController extends ApplicationController
         $stmt->bind_param("i", $patientId);
 
         if (!$stmt->execute()) {
-            throw new Exception("Execution failed: " . $this->dbConnection->error);
+            throw new Exception("Execution failed: " . $this->dbConnection->error, 500);
         }
 
         $conditions = [];
@@ -383,7 +396,7 @@ class ConditionController extends ApplicationController
         $stmt->bind_param("i", $conditionID);
 
         if (!$stmt->execute()) {
-            throw new Exception("Execution failed: " . $this->dbConnection->error);
+            throw new Exception("Execution failed: " . $this->dbConnection->error, 500);
         }
 
         $symptoms = [];
@@ -406,7 +419,7 @@ class DiagnosisController extends ApplicationController
         $stmt->bind_param('i', $id);
 
         if (!$stmt->execute()) {
-            throw new Exception("Execution failed: " . $this->dbConnection->error);
+            throw new Exception("Execution failed: " . $this->dbConnection->error, 500);
         }
         $result = $stmt->get_result();
         $result = $result->fetch_assoc();
@@ -414,7 +427,7 @@ class DiagnosisController extends ApplicationController
         if ($result) {
             return new Diagnosis($result["Diagnosis_ID"], $result["Description"], $result["Appointment_ID"]);
         } else {
-            throw new Exception("Diagnosis not found with ID $id");
+            throw new Exception("Diagnosis not found with ID $id", 404);
         }
     }
 
@@ -431,7 +444,7 @@ class DiagnosisController extends ApplicationController
         $stmt->bind_param("i", $conditionId);
 
         if (!$stmt->execute()) {
-            throw new Exception("Execution failed: " . $this->dbConnection->error);
+            throw new Exception("Execution failed: " . $this->dbConnection->error, 500);
         }
         $result = $stmt->get_result();
 
@@ -459,7 +472,7 @@ class PrescriptionController extends ApplicationController
         $stmt->bind_param("i", $diagnosisID);
 
         if (!$stmt->execute()) {
-            throw new Exception("Execution failed: " . $this->dbConnection->error);
+            throw new Exception($this->dbConnection->error, 404);
         }
 
         $prescriptions = [];
@@ -467,7 +480,7 @@ class PrescriptionController extends ApplicationController
         $result = $stmt->get_result();
 
         if (!$result) {
-            throw new Exception("Diagnosis not found with ID $diagnosisID");
+            throw new Exception("Diagnosis not found with ID $diagnosisID", 404);
         }
 
         while ($prescription = $result->fetch_assoc()) {

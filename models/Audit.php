@@ -14,14 +14,14 @@ enum Outcome
 
 class AuditGenerator
 {
-    static function genarateLog(string $username, string $action, Outcome $outcome)
+    static function genarateLog(string $email, string $action, Outcome $outcome)
     {
         $timestamp = date('Y-m-d H:i:s');
         $remoteIP = $_SERVER['REMOTE_ADDR'];
         $remotePort = $_SERVER['REMOTE_PORT'];
         $outcome = ($outcome === Outcome::SUCCESS) ? "Success" : "Error";
         $logEntry = "[$timestamp] IP: $remoteIP, Port: $remotePort\nAction: $action, Outcome: $outcome\n";
-        $targetDir = __DIR__ . "/../data/$username/";
+        $targetDir = __DIR__ . "/../data/$email/";
         if (!file_exists($targetDir)) {
             @mkdir($targetDir, 0777, true);
         }
