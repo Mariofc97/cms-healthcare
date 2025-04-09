@@ -18,7 +18,6 @@ $subResource = $requestSegments[1] ?? "";
 
 $method = $_SERVER["REQUEST_METHOD"];
 
-$controller = new DoctorController();
 
 switch ($method) {
     case "GET";
@@ -29,14 +28,18 @@ switch ($method) {
                 throw new Exception("Missing doctorID", 400);
             }
 
-            $doctor = $controller->getById((int)$id);
-            AuditGenerator::genarateLog("root", "Get doctor", Outcome::SUCCESS);
+            $id = htmlspecialchars(strip_tags($id));
 
+            if (!filter_var($id, FILTER_VALIDATE_INT)) {
+                throw new Exception("Invalid doctor ID", 400);
+            }
+
+            $controller = new DoctorController();
+            $doctor = $controller->getById((int)$id);
             echo json_encode($doctor);
         } catch (Exception $e) {
-            http_response_code($e->getCode() ?: 500);
             AuditGenerator::genarateLog("root", "Get doctor", Outcome::ERROR);
-            echo json_encode(["error" => "Error getting doctor: ." . $e->getMessage()]);
+            throw new Exception("Error getting doctor: " . $e->getMessage(), $e->getCode());
         }
         break;
 
@@ -44,7 +47,7 @@ switch ($method) {
         $id = $_POST["doctorID"] ?? null;
         $fname = $_POST["fname"] ?? null;
         $lname = $_POST["lname"] ?? null;
-        $phone = $_POST["phone"] ?? null;
+        $phone = $_POST["phone"] ?? "No Phone";
         $email = $_POST["email"] ?? null;
         $pass = $_POST["password"] ?? null;
         $specialty = $_POST["specialty"] ?? null;
@@ -53,13 +56,28 @@ switch ($method) {
             case "":
                 try {
                     if (!isset($fname) || !isset($lname) || !isset($email) || !isset($pass) || !isset($specialty)) {
-                        echo $fname, $lname, $email, $pass, $specialty;
                         throw new Exception("Missing required fields", 400);
                     }
+
+                    if (empty($fname) || empty($lname) || empty($email) || empty($pass) || empty($specialty)) {
+                        throw new Exception("Required fields cannot be empty", 400);
+                    }
+
+                    $controller = new DoctorController();
 
                     if ($controller->doctorExistsByEmail($email)) {
                         throw new Exception("Some error occured", 409);
                     }
+
+                    $fname = htmlspecialchars(strip_tags($fname));
+                    $lname = htmlspecialchars(strip_tags($lname));
+                    $phone = htmlspecialchars(strip_tags($phone));
+                    $email = htmlspecialchars(strip_tags($email));
+                    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        throw new Exception("Invalid email", 400);
+                    }
+                    $pass = strip_tags($pass);
+                    $specialty = htmlspecialchars(strip_tags($specialty));
 
                     $hashedPass = password_hash($pass, PASSWORD_DEFAULT, ['cost' => 10]);
 
@@ -69,17 +87,22 @@ switch ($method) {
                     AuditGenerator::genarateLog("root", "Create doctor", Outcome::SUCCESS);
                     echo json_encode("Doctor created with success", 200);
                 } catch (Exception $e) {
-                    http_response_code($e->getCode() ?: 500);
                     AuditGenerator::genarateLog("root", "Create doctor", Outcome::ERROR);
-                    echo json_encode(["error" => "Error creating doctor: ." . $e->getMessage()]);
+                    throw new Exception("Error creating doctor: " . $e->getMessage(), $e->getCode());
                 }
                 break;
             case "update":
                 try {
-                    if (!$id) {
+                    if (!isset($id)) {
                         throw new Exception("Missing doctorID", 400);
                     }
 
+                    $id = htmlspecialchars(strip_tags($id));
+                    if (!filter_var($id, FILTER_VALIDATE_INT)) {
+                        throw new Exception("Invalid doctor ID", 400);
+                    }
+
+                    $controller = new DoctorController();
                     $existing = $controller->getById((int)$id);
                     if (!$existing) {
                         throw new Exception("Doctor not found with ID $id", 404);
@@ -89,22 +112,41 @@ switch ($method) {
                         throw new Exception("No fiels provided to update");
                     }
 
-                    if ($fname) $existing->setFname($fname);
-                    if ($lname) $existing->setLname($lname);
-                    if ($phone) $existing->setPhone($phone);
-                    if ($email) $existing->setEmail($email);
-                    if ($pass) $existing->setPassword($pass);
-                    if ($specialty) $existing->setSpecialty($specialty);
-
+                    if ($fname) {
+                        $fname = htmlspecialchars(strip_tags($fname));
+                        $existing->setFname($fname);
+                    }
+                    if ($lname) {
+                        $lname = htmlspecialchars(strip_tags($lname));
+                        $existing->setLname($lname);
+                    }
+                    if ($phone) {
+                        $phone = htmlspecialchars(strip_tags($phone));
+                        $existing->setPhone($phone);
+                    }
+                    if ($email) {
+                        $email = htmlspecialchars(strip_tags($email));
+                        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            throw new Exception("Invalid email", 400);
+                        }
+                        $existing->setEmail($email);
+                    }
+                    if ($pass) {
+                        $pass = strip_tags($pass);
+                        $pass = password_hash($pass, PASSWORD_BCRYPT, ["cost" => 10]);
+                        $existing->setPassword($pass);
+                    }
+                    if ($specialty) {
+                        $specialty = htmlspecialchars(strip_tags($specialty));
+                        $existing->setSpecialty($specialty);
+                    }
                     $controller->updateRecord($existing);
 
-                    http_response_code(200);
                     AuditGenerator::genarateLog("root", "Update doctor", Outcome::SUCCESS);
-                    echo json_encode("Doctor uddate with success");
+                    echo json_encode("Doctor update with success");
                 } catch (Exception $e) {
-                    http_response_code($e->getCode() ?: 500);
                     AuditGenerator::genarateLog("root", "Update doctor", Outcome::ERROR);
-                    echo json_encode(["error" => "Error updating doctor: " . $e->getMessage()]);
+                    throw new Exception("Error updating doctor: " . $e->getMessage(), $e->getCode());
                 }
                 break;
             case "delete":
@@ -112,22 +154,28 @@ switch ($method) {
                 try {
                     if (!$id) {
                         http_response_code(400);
-                        throw new Exception("Missing doctorID");
+                        throw new Exception("Missing doctorID", 400);
                     }
+
+                    $id = htmlspecialchars(strip_tags($id));
+                    if (!filter_var($id, FILTER_VALIDATE_INT)) {
+                        throw new Exception("Invalid doctor ID", 400);
+                    }
+
+                    $controller = new DoctorController();
 
                     $existing = $controller->getById((int)$id);
                     if (!$existing) {
                         http_response_code(404);
-                        throw new Exception("Doctor not found with ID $id");
+                        throw new Exception("Doctor not found with ID $id", 500);
                     }
 
                     $controller->deleteRecord((int)$id);
                     AuditGenerator::genarateLog("root", "Delete doctor", Outcome::SUCCESS);
                     echo json_encode("Doctor deleted with success");
                 } catch (Exception $e) {
-                    http_response_code($e->getCode() ?: 500);
                     AuditGenerator::genarateLog("root", "Delete doctor", Outcome::ERROR);
-                    echo json_encode(["error" => "Error deleting doctor: " . $e->getMessage()]);
+                    throw new Exception("Error deleting doctor: " . $e->getMessage(), $e->getCode());
                 }
                 break;
             default:

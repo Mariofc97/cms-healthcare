@@ -262,3 +262,41 @@ Action: Create prescription, Outcome: Success
 Action: Create prescription, Outcome: Success
 [2025-04-09 07:27:30] IP: ::1, Port: 50045
 Action: Create prescription, Outcome: Success
+[2025-04-09 17:00:46] IP: ::1, Port: 59492
+Action: Get doctor, Outcome: Error
+[2025-04-09 17:03:57] IP: ::1, Port: 59524
+Action: Create doctor, Outcome: Error
+[2025-04-09 17:04:21] IP: ::1, Port: 59530
+Action: Create doctor, Outcome: Error
+[2025-04-09 17:04:24] IP: ::1, Port: 59533
+Action: Create doctor, Outcome: Error
+[2025-04-09 17:04:50] IP: ::1, Port: 59536
+Action: Create doctor, Outcome: Error
+[2025-04-09 17:04:52] IP: ::1, Port: 59539
+Action: Create doctor, Outcome: Error
+[2025-04-09 17:05:00] IP: ::1, Port: 59541
+Action: Create doctor, Outcome: Error
+[2025-04-09 17:06:02] IP: ::1, Port: 59555
+Action: Create doctor, Outcome: Error
+[2025-04-09 17:06:21] IP: ::1, Port: 59588
+Action: Create doctor, Outcome: Success
+[2025-04-09 17:07:04] IP: ::1, Port: 59624
+Action: Get doctor, Outcome: Error
+[2025-04-09 17:07:17] IP: ::1, Port: 59639
+Action: Get doctor, Outcome: Error
+[2025-04-09 17:07:51] IP: ::1, Port: 59646
+Action: Update doctor, Outcome: Error
+[2025-04-09 17:08:21] IP: ::1, Port: 59670
+Action: Update doctor, Outcome: Error
+[2025-04-09 17:08:37] IP: ::1, Port: 59690
+Action: Update doctor, Outcome: Success
+[2025-04-09 17:09:22] IP: ::1, Port: 59705
+Action: Delete doctor, Outcome: Error
+[2025-04-09 17:09:28] IP: ::1, Port: 59711
+Action: Delete doctor, Outcome: Error
+[2025-04-09 17:09:32] IP: ::1, Port: 59711
+Action: Delete doctor, Outcome: Error
+[2025-04-09 17:09:36] IP: ::1, Port: 59711
+Action: Delete doctor, Outcome: Success
+[2025-04-09 17:09:47] IP: ::1, Port: 59739
+Action: Delete doctor, Outcome: Error
