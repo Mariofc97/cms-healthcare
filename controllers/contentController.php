@@ -485,6 +485,31 @@ class DiagnosisController extends ApplicationController
             throw new Exception("Execution failed: " . $this->dbConnection->error);
         }
     }
+
+    public function getByCondition(int $conditionId): array
+    {
+        $sql = "SELECT Diagnosis_ID, Description, diagnosis.Appointment_ID FROM
+        diagnosis INNER JOIN appointment
+        ON diagnosis.Appointment_ID = appointment.Appointment_ID
+        INNER JOIN pt_condition
+        ON appointment.Condition_ID = pt_condition.Condition_ID
+        WHERE pt_condition.Condition_ID = ?";
+
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("i", $conditionId);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execution failed: " . $this->dbConnection->error, 500);
+        }
+        $result = $stmt->get_result();
+
+        $diagnoses = [];
+        while ($diagnosis = $result->fetch_assoc()) {
+            $diagnoses[] = new Diagnosis($diagnosis["Diagnosis_ID"], $diagnosis["Description"], $diagnosis["Appointment_ID"]);
+        }
+
+        return $diagnoses;
+    }
 }
 
 class PrescriptionController extends ApplicationController
