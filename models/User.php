@@ -192,7 +192,7 @@ final class Patient extends User implements JsonSerializable
     }
 }
 
-final class Doctor extends User
+final class Doctor extends User implements JsonSerializable
 {
     private string $specialty;
 
@@ -217,6 +217,18 @@ final class Doctor extends User
     public function setSpecialty(string $specialty): void
     {
         $this->specialty = $specialty;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            "id" => $this->getId(),
+            "Fname" => $this->getFname(),
+            "Lname" => $this->getLname(),
+            "Phone" => $this->getPhone(),
+            "Email" => $this->getEmail(),
+            "Specialty" => $this->getSpecialty()
+        ];
     }
 }
 
