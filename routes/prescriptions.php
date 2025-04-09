@@ -14,27 +14,39 @@ $requestUri = trim($_SERVER["PATH_INFO"] ?? "", "/");
 $requestSegments = explode("/", $requestUri);
 $subResource = $requestSegments[1] ?? "";
 
-$controller = new PrescriptionController();
-
 try {
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        $controller = new PrescriptionController();
         switch ($subResource) {
             case "":
-                $medicine = htmlspecialchars(strip_tags(trim($_POST["medicine"] ?? "")));
+                $medicine = $_POST["medicine"] ?? null;
                 $dosage = $_POST["dosage"] ?? null;
-                $doctorId = $_POST["doctor_id"] ?? null;
-                $diagnosisId = $_POST["diagnosis_id"] ?? null;
+                $doctorId = $_POST["doctorID"] ?? null;
+                $diagnosisId = $_POST["diagnosisID"] ?? null;
 
-                if (!$medicine || !$dosage || !$doctorId || !$diagnosisId) {
+                if (!isset($medicine, $dosage, $doctorId, $diagnosisId)) {
                     throw new Exception("Missing required fields", 400);
+                }
+
+                if (empty($medicine) || empty($dosage) || empty($doctorId) || empty($diagnosisId)) {
+                    throw new Exception("Required fields cannot be empty", 400);
+                }
+
+                $medicine = htmlspecialchars(strip_tags($medicine));
+                $dosage = htmlspecialchars(strip_tags($dosage));
+                $doctorId = htmlspecialchars(strip_tags($doctorId));
+                if (!filter_var($doctorId, FILTER_VALIDATE_INT)) {
+                    throw new Exception("Invalid DoctorID");
+                }
+                $diagnosisId = htmlspecialchars(strip_tags($diagnosisId));
+                if (!filter_var($diagnosisId, FILTER_VALIDATE_INT)) {
+                    throw new Exception("Invalid DiagnosisID");
                 }
 
                 $prescription = new Prescription(0, $medicine, $dosage);
                 $controller->newRecord($prescription, (int)$doctorId, (int)$diagnosisId);
                 AuditGenerator::genarateLog("root", "Create prescription", Outcome::SUCCESS);
-
-                http_response_code(200);
-                echo json_encode("Prescription created and linked with success");
+                echo json_encode("Prescription created with success");
                 break;
 
             case "update":
@@ -42,15 +54,33 @@ try {
                 $medicine = $_POST["medicine"] ?? null;
                 $dosage = $_POST["dosage"] ?? null;
 
-                if (!$id || !$medicine || !$dosage) {
+                if (!isset($id)) {
                     throw new Exception("Missing required fields", 400);
                 }
 
-                $prescription = new Prescription((int)$id, $medicine, $dosage);
-                $controller->updateRecord($prescription);
-                AuditGenerator::genarateLog("root", "Update prescription", Outcome::SUCCESS);
+                if (empty($id)) {
+                    throw new Exception("Required fields cannot be empty", 400);
+                }
 
-                http_response_code(200);
+                $id = htmlspecialchars(strip_tags($id));
+                if (!filter_var($id, FILTER_VALIDATE_INT)) {
+                    throw new Exception("Invalid prescription ID", 400);
+                }
+
+                $existing = $controller->getById((int)$id);
+
+                if ($medicine) {
+                    $medicine = htmlspecialchars(strip_tags($medicine));
+                    $existing->setMedicine($medicine);
+                }
+
+                if ($dosage) {
+                    $dosage = htmlspecialchars(strip_tags($dosage));
+                    $existing->setDosage($dosage);
+                }
+                $controller->updateRecord($existing);
+
+                AuditGenerator::genarateLog("root", "Update prescription", Outcome::SUCCESS);
                 echo json_encode("Prescription updated with success");
                 break;
 
@@ -61,7 +91,6 @@ try {
         throw new Exception("Invalid request method", 405);
     }
 } catch (Exception $e) {
-    AuditGenerator::genarateLog("root", "Prescription route error: " . $e->getMessage(), Outcome::ERROR);
-    http_response_code($e->getCode() ?: 500);
-    echo json_encode(["error" => $e->getMessage()]);
+    AuditGenerator::genarateLog("root", "Prescription management" . $e->getMessage(), Outcome::ERROR);
+    throw new Exception("There was an error managing prescriptions: " . $e->getMessage(), $e->getCode());
 }

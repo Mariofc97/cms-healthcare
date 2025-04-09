@@ -300,3 +300,33 @@ Action: Delete doctor, Outcome: Error
 Action: Delete doctor, Outcome: Success
 [2025-04-09 17:09:47] IP: ::1, Port: 59739
 Action: Delete doctor, Outcome: Error
+[2025-04-09 17:26:31] IP: ::1, Port: 59832
+Action: Prescription managementMissing required fields, Outcome: Error
+[2025-04-09 17:26:51] IP: ::1, Port: 59839
+Action: Prescription managementMissing required fields, Outcome: Error
+[2025-04-09 17:27:38] IP: ::1, Port: 59856
+Action: Prescription managementMissing required fields, Outcome: Error
+[2025-04-09 17:27:46] IP: ::1, Port: 59863
+Action: Prescription managementMissing required fields, Outcome: Error
+[2025-04-09 17:27:53] IP: ::1, Port: 59870
+Action: Prescription managementMissing required fields, Outcome: Error
+[2025-04-09 17:28:10] IP: ::1, Port: 59877
+Action: Prescription managementMissing required fields, Outcome: Error
+[2025-04-09 17:28:57] IP: ::1, Port: 59912
+Action: Prescription managementMissing required fields, Outcome: Error
+[2025-04-09 17:28:58] IP: ::1, Port: 59919
+Action: Prescription managementMissing required fields, Outcome: Error
+[2025-04-09 17:29:14] IP: ::1, Port: 59924
+Action: Prescription managementRequired fields cannot be empty, Outcome: Error
+[2025-04-09 17:29:19] IP: ::1, Port: 59928
+Action: Create prescription, Outcome: Success
+[2025-04-09 17:30:01] IP: ::1, Port: 59974
+Action: Create prescription, Outcome: Success
+[2025-04-09 17:31:34] IP: ::1, Port: 60014
+Action: Create prescription, Outcome: Success
+[2025-04-09 17:32:29] IP: ::1, Port: 60047
+Action: Update prescription, Outcome: Success
+[2025-04-09 17:32:50] IP: ::1, Port: 60067
+Action: Update prescription, Outcome: Success
+[2025-04-09 17:33:01] IP: ::1, Port: 60100
+Action: Prescription managementPrescription not found with ID 8, Outcome: Error
