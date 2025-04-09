@@ -70,7 +70,7 @@ class PatientController extends ApplicationController
         $lname = $newRecord->getLname();
         $phone = $newRecord->getPhone();
         $email = $newRecord->getEmail();
-        $password = password_hash($newRecord->getPassword(), PASSWORD_ARGON2I);
+        $password = password_hash($newRecord->getPassword(), PASSWORD_ARGON2I, ["cost" => 10]);
 
         $sql = "SELECT Email FROM user_tb WHERE Email = ?";
         $stmt = $this->dbConnection->prepare($sql);

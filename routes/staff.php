@@ -52,7 +52,7 @@ if ($_SESSION["userInfo"]["Type"] === User::STAFF) {
               $updateStaff->setEmail($email);
             }
             if (isset($password) && !empty($password)) {
-              $password = password_hash(strip_tags($_POST["pass"]), PASSWORD_DEFAULT, ['cost' => 10]) ?? null; //Sanitize and convert the password into a hashed value
+              $password = password_hash(strip_tags($_POST["pass"]), PASSWORD_ARGON2I, ['cost' => 10]) ?? null; //Sanitize and convert the password into a hashed value
               $updateStaff->setPassword($password);
             }
 
@@ -86,7 +86,7 @@ if ($_SESSION["userInfo"]["Type"] === User::STAFF) {
         $lname = htmlspecialchars(strip_tags($_POST["lname"])) ?? null;
         $phone = htmlspecialchars(strip_tags($_POST["phone"])) ?? null;
         $email = htmlspecialchars(strip_tags($_POST["email"])) ?? null;
-        $password = password_hash(strip_tags($_POST["pass"]), PASSWORD_DEFAULT, ['cost' => 10]) ?? null; //Sanitize and convert the password into a hashed value
+        $password = password_hash(strip_tags($_POST["pass"]), PASSWORD_ARGON2I, ['cost' => 10]) ?? null; //Sanitize and convert the password into a hashed value
 
         $newStaff = new Staff(0, $fname, $lname, $phone, $email, $password, User::STAFF);
         try {

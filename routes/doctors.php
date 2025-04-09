@@ -81,7 +81,7 @@ switch ($method) {
                         $pass = strip_tags($pass);
                         $specialty = htmlspecialchars(strip_tags($specialty));
 
-                        $hashedPass = password_hash($pass, PASSWORD_DEFAULT, ['cost' => 10]);
+                        $hashedPass = password_hash($pass, PASSWORD_ARGON2ID, ['cost' => 10]);
 
                         $newDoctor = new Doctor(0, $fname, $lname, $phone, $email, $hashedPass, $specialty);
                         $controller->newRecord($newDoctor);
@@ -139,7 +139,7 @@ switch ($method) {
                         }
                         if ($pass) {
                             $pass = strip_tags($pass);
-                            $pass = password_hash($pass, PASSWORD_BCRYPT, ["cost" => 10]);
+                            $pass = password_hash($pass, PASSWORD_ARGON2I, ["cost" => 10]);
                             $existing->setPassword($pass);
                         }
                         if ($specialty) {
