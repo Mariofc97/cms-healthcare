@@ -101,6 +101,7 @@ class PatientController extends ApplicationController
             $stmt->bind_param("isss", $id, $gender, $birthdate, $address);
 
             if ($stmt->execute()) {
+                $stmt->close();
                 return true;
             } else throw new Exception($this->dbConnection->error, 500);
         } else {
@@ -129,6 +130,7 @@ class PatientController extends ApplicationController
             $stmt = $this->dbConnection->prepare($sql);
             $stmt->bind_param("sssi", $gender, $birthdate, $address, $id);
             if ($stmt->execute()) {
+                $stmt->close();
                 return true;
             } else throw new Exception($this->dbConnection->error, 500);
         } else {
@@ -145,6 +147,7 @@ class PatientController extends ApplicationController
         $stmt->bind_param("ii", $id, $type);
 
         if ($stmt->execute()) {
+            $stmt->close();
             return true;
         } else {
             throw new Exception($this->dbConnection->error, 500);
@@ -170,6 +173,7 @@ class PatientController extends ApplicationController
         $result = $result->fetch_assoc();
         if ($result) {
             $result["Gender"] = ($result["Gender"] === "F") ? Gender::FEMALE : Gender::MALE;
+            $stmt->close();
             return new Patient(
                 $result["User_ID"],
                 $result["Lname"],
@@ -206,6 +210,7 @@ class DoctorController extends ApplicationController
         $result = $stmt->get_result()->fetch_assoc();
 
         if ($result) {
+            $stmt->close();
             return new Doctor(
                 $result["Doctor_ID"],
                 $result["Fname"],
@@ -232,6 +237,7 @@ class DoctorController extends ApplicationController
         }
 
         $result = $stmt->get_result();
+        $stmt->close();
         return ($result->num_rows > 0);
     }
 
@@ -259,6 +265,7 @@ class DoctorController extends ApplicationController
             $stmtDoctor->bind_param("is", $userId, $specialty);
 
             if ($stmtDoctor->execute()) {
+                $stmtDoctor->close();
                 return true;
             } else {
                 throw new Exception($this->dbConnection->error);
@@ -290,6 +297,7 @@ class DoctorController extends ApplicationController
             $stmtDoctor->bind_param("si", $specialty, $id);
 
             if ($stmtDoctor->execute()) {
+                $stmtDoctor->close();
                 return true;
             } else {
                 throw new Exception($this->dbConnection->error);
@@ -308,6 +316,7 @@ class DoctorController extends ApplicationController
         $stmt->bind_param("ii", $id, $type);
 
         if ($stmt->execute()) {
+            $stmt->close();
             return true;
         } else {
             throw new Exception($this->dbConnection->error);
@@ -331,15 +340,11 @@ class StaffController extends ApplicationController
         $result = $result->fetch_assoc();
 
         if ($result) {
+            $stmt->close();
             return new Staff($result["User_ID"], $result["Fname"], $result["Lname"], $result["Phone"], $result["Email"], $result["Pass"], User::STAFF);
         } else {
             throw new Exception("Staff not found with ID $id");
         }
-    }
-
-    public function getAll(): array
-    {
-        return array();
     }
 
     public function newRecord(Staff $newRecord): bool
@@ -356,6 +361,7 @@ class StaffController extends ApplicationController
         $stmt->bind_param('sssssi', $fname, $lname, $phone, $email, $password, $type);
 
         if ($stmt->execute()) {
+            $stmt->close();
             return true;
         } else {
             throw new Exception($this->dbConnection->error, 500);
@@ -377,6 +383,7 @@ class StaffController extends ApplicationController
         if (!$stmt->execute()) {
             throw new Exception("Execution failed: " . $this->dbConnection->error);
         }
+        $stmt->close();
         return true;
     }
 
@@ -388,6 +395,7 @@ class StaffController extends ApplicationController
         if (!$stmt->execute()) {
             throw new Exception("Execution failed: " . $this->dbConnection->error);
         }
+        $stmt->close();
         return true;
     }
 }
@@ -407,13 +415,9 @@ class AppointmentController extends ApplicationController
         $result = $result->fetch_assoc();
 
         if ($result) {
+            $stmt->close();
             return new Appointment($result["Appointment_ID"], new DateTime($result["Appointment_Date"]), $result["Condition_ID"], $result["Doctor_ID"], $result["Status"]);
         } else throw new Exception("Appointment not found with ID $id", 404);
-    }
-
-    public function getAll(): array
-    {
-        return array();
     }
 
     public function newRecord(Appointment $newRecord): bool
@@ -426,6 +430,7 @@ class AppointmentController extends ApplicationController
         $stmt->bind_param("sii", $date, $condition, $doctor);
 
         if ($stmt->execute()) {
+            $stmt->close();
             return true;
         } else {
             throw new Exception($this->dbConnection->error, 500);
@@ -443,6 +448,7 @@ class AppointmentController extends ApplicationController
         $stmt->bind_param("sii", $date, $status, $id);
 
         if ($stmt->execute()) {
+            $stmt->close();
             return true;
         } else {
             throw new Exception($this->dbConnection->error, 500);
@@ -456,6 +462,7 @@ class AppointmentController extends ApplicationController
         $stmt->bind_param("i", $id);
 
         if ($stmt->execute()) {
+            $stmt->close();
             return true;
         } else {
             throw new Exception($this->dbConnection->error, 500);
@@ -494,7 +501,7 @@ class AppointmentController extends ApplicationController
                 $appointment["Doctor_ID"]
             );
         }
-
+        $stmt->close();
         return $appointments;
     }
 
@@ -513,6 +520,7 @@ class AppointmentController extends ApplicationController
         if ($stmt->execute()) {
             $result = $stmt->get_result();
             $result = $result->fetch_assoc();
+            $stmt->close();
             return new Doctor(
                 $result["Doctor_ID"],
                 $result["Fname"],
@@ -551,6 +559,7 @@ class ConditionController extends ApplicationController
                     throw new Exception($this->dbConnection->error, 500);
                 }
             }
+            $stmt->close();
             return true;
         } else {
             throw new Exception($this->dbConnection->error, 500);
@@ -582,7 +591,7 @@ class ConditionController extends ApplicationController
         foreach ($conditions as $condition) {
             $condition->setSymptoms($this->getSymptoms($condition->getId()));
         }
-
+        $stmt->close();
         return $conditions;
     }
 
@@ -606,7 +615,7 @@ class ConditionController extends ApplicationController
         while ($symptom = $result->fetch_assoc()) {
             $symptoms[] = new Symptom($symptom["Condition_ID"], $symptom["Symptom"]);
         }
-
+        $stmt->close();
         return $symptoms;
     }
 
@@ -629,6 +638,7 @@ class ConditionController extends ApplicationController
         $result = $stmt->get_result();
         $result = $result->fetch_assoc();
         if ($result) {
+            $stmt->close();
             return new Condition($result["Condition_ID"], new DateTime($result["StartDate"]), $result["Patient_ID"]);
         } else {
             throw new Exception("Diagnosis not found with ID $diagnosisId", 404);
@@ -651,6 +661,7 @@ class DiagnosisController extends ApplicationController
         $result = $result->fetch_assoc();
 
         if ($result) {
+            $stmt->close();
             return new Diagnosis($result["Diagnosis_ID"], $result["Description"], $result["Appointment_ID"]);
         } else {
             throw new Exception("Diagnosis not found with ID $id");
@@ -667,6 +678,7 @@ class DiagnosisController extends ApplicationController
         $stmt->bind_param('si', $description, $appointmentid);
 
         if ($stmt->execute()) {
+            $stmt->close();
             return true;
         } else {
             throw new Exception("Execution failed: " . $this->dbConnection->error);
@@ -694,7 +706,7 @@ class DiagnosisController extends ApplicationController
         while ($diagnosis = $result->fetch_assoc()) {
             $diagnoses[] = new Diagnosis($diagnosis["Diagnosis_ID"], $diagnosis["Description"], $diagnosis["Appointment_ID"]);
         }
-
+        $stmt->close();
         return $diagnoses;
     }
 }
@@ -712,6 +724,7 @@ class PrescriptionController extends ApplicationController
         $result = $stmt->get_result();
         $result = $result->fetch_assoc();
         if ($result) {
+            $stmt->close();
             return new Prescription($result["Prescription_ID"], $result["Medicine"], $result["Dosage"]);
         } else {
             throw new Exception("Prescription not found with ID $id", 404);
@@ -745,7 +758,7 @@ class PrescriptionController extends ApplicationController
         while ($prescription = $result->fetch_assoc()) {
             $prescriptions[] = $prescription;
         }
-
+        $stmt->close();
         return $prescriptions;
     }
 
@@ -792,7 +805,7 @@ class PrescriptionController extends ApplicationController
         if ($stmt->execute() !== true) {
             throw new Exception("Error linking prescription: " . $this->dbConnection->error);
         }
-
+        $stmt->close();
         return true;
     }
 
@@ -820,7 +833,7 @@ class PrescriptionController extends ApplicationController
         if ($stmt->execute() !== true) {
             throw new Exception("Error updating prescription: " . $this->dbConnection->error);
         }
-
+        $stmt->close();
         return true;
     }
 }
