@@ -212,8 +212,9 @@ CMS Healthcare is a content management system designed for healthcare providers 
     -   `dosage` (string, required): Dosage information.
     -   `doctorID` (int, required): Doctor ID.
     -   `diagnosisID` (int, required): Diagnosis ID.
+    -   `dataFile` (file, optional): A file related to the prescription (e.g., PDF or image).
 -   **Response**:
-    -   On success: Returns a success message.
+    -   On success: Returns a success message and uploads the file if provided.
     -   On failure: Returns an error message.
 
 ---
