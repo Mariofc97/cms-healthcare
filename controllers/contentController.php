@@ -37,7 +37,9 @@ class PatientController extends ApplicationController
 {
     public function getById(int $id): Patient
     {
-        $sql = "SELECT * FROM patient INNER JOIN user_tb WHERE User_ID = ? AND Type = ? AND Activated = 1";
+        $sql = "SELECT * FROM patient INNER JOIN user_tb
+        ON patient.Patient_ID = user_tb.User_ID 
+        WHERE User_ID = ? AND Type = ? AND Activated = 1";
         $stmt = $this->dbConnection->prepare($sql);
         $type = User::PATIENT;
         $stmt->bind_param("ii", $id, $type);
@@ -50,6 +52,7 @@ class PatientController extends ApplicationController
 
         if ($result) {
             $result["Gender"] = ($result["Gender"] === "F") ? Gender::FEMALE : Gender::MALE;
+            $stmt->close();
             return new Patient(
                 $result["User_ID"],
                 $result["Lname"],

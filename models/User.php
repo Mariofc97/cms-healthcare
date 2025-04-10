@@ -103,8 +103,6 @@ class User implements AppItem
     public function setPassword($password): void
     {
         $this->password = $password;
-        // TODO: HASH PASSWORD
-        // TODO: CHANGE PASSWORD IN DATABASE
     }
 
     public function getRole(): int
