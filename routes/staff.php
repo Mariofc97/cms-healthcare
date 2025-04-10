@@ -95,9 +95,10 @@ if ($_SESSION["userInfo"]["Type"] === User::STAFF) {
             throw new Exception("Not possible to add staff", 409); // Staff already exists with email
           }
           $controller->newRecord($newStaff);
-          AuditGenerator::genarateLog("root", "Add New Staff", outcome::SUCCESS);
+          AuditGenerator::genarateLog("root", "Add New Staff", Outcome::SUCCESS);
+          echo json_encode("Staff created successfully");
         } catch (Exception $e) {
-          AuditGenerator::genarateLog("root", "Add New Staff", outcome::ERROR);
+          AuditGenerator::genarateLog("root", "Add New Staff", Outcome::ERROR);
           throw new Exception("Error adding new staff. " . $e->getMessage(), 500);
         }
       }

@@ -114,6 +114,7 @@ if ($_SESSION["userInfo"]["Type"] === User::STAFF) {
                     $controller->getById((int)$id);
                     $controller->deleteRecord((int)$id);
                     AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete appointment", Outcome::SUCCESS);
+                    echo json_encode("Appointment deleted successfully");
                 } catch (Exception $e) {
                     AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete appointment", Outcome::ERROR);
                     throw new Exception("Error deleting appointment: " . $e->getMessage(), 500);

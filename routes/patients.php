@@ -301,6 +301,7 @@ switch ($method) {
                         $condition = new Condition(0, new DateTime(), (int)$patientId, $symptomsArr);
                         $controller->newRecord($condition);
                         AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Create condition", Outcome::SUCCESS);
+                        echo json_encode("Condition created successfully");
                     } catch (Exception $e) {
                         AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Create condition", Outcome::ERROR);
                         throw new Exception("Error creating condition: " . $e->getMessage(), $e->getCode());

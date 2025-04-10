@@ -57,6 +57,7 @@ switch ($method) {
         $controller = new DiagnosisController();
         $controller->newRecord($newDiagnosis);
         AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Adding Diagnosis", outcome::SUCCESS);
+        echo json_encode("Diagnosis added with success");
       } catch (Exception $e) {
         AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Adding Diagnosis", outcome::ERROR);
         throw new Exception("Error adding diagnosis" . $e->getMessage(), $e->getCode());
