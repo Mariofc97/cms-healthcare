@@ -57,19 +57,19 @@ if ($_SESSION["userInfo"]["Type"] === User::STAFF) {
             }
 
             $controller->updateRecord($updateStaff);
-            AuditGenerator::genarateLog("root", "Update Staff", Outcome::SUCCESS);
+            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update Staff", Outcome::SUCCESS);
             echo json_encode("Staff updated successfully");
           } catch (Exception $e) {
-            AuditGenerator::genarateLog("root", "Update Staff", Outcome::ERROR);
+            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update Staff", Outcome::ERROR);
             throw new Exception("Error updating staff information. " . $e->getMessage(), 500); //500 Internal Server Error, server error response status code
           }
         } elseif (in_array("delete", $path)) {  //delete(deactivate) staff
           try {
             $controller->deleteStaff($id);
-            AuditGenerator::genarateLog("root", "Delete Staff", Outcome::SUCCESS);
+            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete Staff", Outcome::SUCCESS);
             echo json_encode("Staff deleted successfully");
           } catch (Exception $e) {
-            AuditGenerator::genarateLog("root", "Delete Staff", Outcome::ERROR);
+            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete Staff", Outcome::ERROR);
             throw new Exception("Error deleting staff information. " . $e->getMessage(), 500);
           }
         }

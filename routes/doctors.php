@@ -39,7 +39,7 @@ switch ($method) {
             $doctor = $controller->getById((int)$id);
             echo json_encode($doctor);
         } catch (Exception $e) {
-            AuditGenerator::genarateLog("root", "Get doctor", Outcome::ERROR);
+            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Get doctor", Outcome::ERROR);
             throw new Exception("Error getting doctor: " . $e->getMessage(), $e->getCode());
         }
         break;
@@ -148,10 +148,10 @@ switch ($method) {
                         }
                         $controller->updateRecord($existing);
 
-                        AuditGenerator::genarateLog("root", "Update doctor", Outcome::SUCCESS);
+                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update doctor", Outcome::SUCCESS);
                         echo json_encode("Doctor update with success");
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog("root", "Update doctor", Outcome::ERROR);
+                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update doctor", Outcome::ERROR);
                         throw new Exception("Error updating doctor: " . $e->getMessage(), $e->getCode());
                     }
                 } else {
@@ -181,10 +181,10 @@ switch ($method) {
                         }
 
                         $controller->deleteRecord((int)$id);
-                        AuditGenerator::genarateLog("root", "Delete doctor", Outcome::SUCCESS);
+                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete doctor", Outcome::SUCCESS);
                         echo json_encode("Doctor deleted with success");
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog("root", "Delete doctor", Outcome::ERROR);
+                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete doctor", Outcome::ERROR);
                         throw new Exception("Error deleting doctor: " . $e->getMessage(), $e->getCode());
                     }
                 } else {
