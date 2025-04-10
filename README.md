@@ -86,7 +86,7 @@ CMS Healthcare is a content management system designed for healthcare providers 
         CREATE TABLE APPOINTMENT (
             Appointment_ID int NOT NULL AUTO_INCREMENT,
             Appointment_Date datetime NOT NULL,
-            Staus boolean DEFAULT 0,
+            Status boolean DEFAULT 0,
             Condition_ID int NOT NULL,
             Doctor_ID int NOT NULL,
             PRIMARY KEY(Appointment_ID),

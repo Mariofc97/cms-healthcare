@@ -75,6 +75,10 @@ switch ($method) {
                             $latestCondition = $conditions[$conditionsNum - 1];
                             $diagnosisController = new DiagnosisController();
                             $latestCondition->setDiagnoses($diagnosisController->getByCondition((int)$latestCondition->getId()));
+                            foreach ($latestCondition->getDiagnoses() as $diagnosis) {
+                                $prescriptionController = new PrescriptionController();
+                                $diagnosis->setPrescriptions($prescriptionController->getByDiagnosis((int)$diagnosis->getId()));
+                            }
                             echo json_encode($latestCondition);
                         } else {
                             echo json_encode("Patient doesn't have any conditions");

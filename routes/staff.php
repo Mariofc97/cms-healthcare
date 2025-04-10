@@ -76,15 +76,19 @@ if ($_SESSION["userInfo"]["Type"] === User::STAFF) {
 
         //add new staff member's to the system
       } else {
-        if (!isset($fname) || !isset($lname) || !isset($phone) || !isset($email) || !isset($password)) {
+        if (!isset($fname) || !isset($lname) || !isset($email) || !isset($password)) {
           throw new Exception("Parameters missing", 400); //400 Bad Request, client error response status code
         }
-        if (empty($fname) || empty($lname) || empty($phone) || empty($email) || empty($password)) {
+        if (empty($fname) || empty($lname) || empty($email) || empty($password)) {
           throw new Exception("Parameters cannnot be empty", 400);
         }
         $fname = htmlspecialchars(strip_tags($_POST["fname"])) ?? null; // Sanitize and assign it to $fname
         $lname = htmlspecialchars(strip_tags($_POST["lname"])) ?? null;
-        $phone = htmlspecialchars(strip_tags($_POST["phone"])) ?? "No Phone";
+        if (!isset($phone) || empty($phone)) {
+          $phone = "No Phone";
+        } else {
+          $phone = htmlspecialchars(strip_tags($_POST["phone"])) ?? "No Phone";
+        }
         $email = htmlspecialchars(strip_tags($_POST["email"])) ?? null;
         $password = password_hash(strip_tags($_POST["pass"]), PASSWORD_ARGON2I, ['cost' => 10]) ?? null; //Sanitize and convert the password into a hashed value
 
