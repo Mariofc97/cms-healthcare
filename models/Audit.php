@@ -14,7 +14,7 @@ enum Outcome
 
 class AuditGenerator
 {
-    static function genarateLog(string $email, string $action, Outcome $outcome)
+    static function generateLog(string $email, string $action, Outcome $outcome)
     {
         $timestamp = date('Y-m-d H:i:s');
         $remoteIP = $_SERVER['REMOTE_ADDR'];

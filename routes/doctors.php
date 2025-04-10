@@ -39,7 +39,7 @@ switch ($method) {
             $doctor = $controller->getById((int)$id);
             echo json_encode($doctor);
         } catch (Exception $e) {
-            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Get doctor", Outcome::ERROR);
+            AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Get doctor", Outcome::ERROR);
             throw new Exception("Error getting doctor: " . $e->getMessage(), $e->getCode());
         }
         break;
@@ -86,10 +86,10 @@ switch ($method) {
                         $newDoctor = new Doctor(0, $fname, $lname, $phone, $email, $hashedPass, $specialty);
                         $controller->newRecord($newDoctor);
 
-                        AuditGenerator::genarateLog("root", "Create doctor", Outcome::SUCCESS);
+                        AuditGenerator::generateLog("root", "Create doctor", Outcome::SUCCESS);
                         echo json_encode("Doctor created with success", 200);
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog("root", "Create doctor", Outcome::ERROR);
+                        AuditGenerator::generateLog("root", "Create doctor", Outcome::ERROR);
                         throw new Exception("Error creating doctor: " . $e->getMessage(), $e->getCode());
                     }
                 } else {
@@ -148,10 +148,10 @@ switch ($method) {
                         }
                         $controller->updateRecord($existing);
 
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update doctor", Outcome::SUCCESS);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Update doctor", Outcome::SUCCESS);
                         echo json_encode("Doctor update with success");
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update doctor", Outcome::ERROR);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Update doctor", Outcome::ERROR);
                         throw new Exception("Error updating doctor: " . $e->getMessage(), $e->getCode());
                     }
                 } else {
@@ -181,10 +181,10 @@ switch ($method) {
                         }
 
                         $controller->deleteRecord((int)$id);
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete doctor", Outcome::SUCCESS);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Delete doctor", Outcome::SUCCESS);
                         echo json_encode("Doctor deleted with success");
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete doctor", Outcome::ERROR);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Delete doctor", Outcome::ERROR);
                         throw new Exception("Error deleting doctor: " . $e->getMessage(), $e->getCode());
                     }
                 } else {

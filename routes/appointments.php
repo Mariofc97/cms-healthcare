@@ -48,10 +48,10 @@ if ($_SESSION["userInfo"]["Type"] === User::STAFF) {
                     $newAppointment = new Appointment(0, $date, $condition, $doctor);
                     $controller = new AppointmentController();
                     $controller->newRecord($newAppointment);
-                    AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Create appointment", Outcome::SUCCESS);
+                    AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Create appointment", Outcome::SUCCESS);
                     echo json_encode("Appointment created successfully");
                 } catch (Exception $e) {
-                    AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Create appointment", Outcome::ERROR);
+                    AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Create appointment", Outcome::ERROR);
                     throw new Exception("Error creating new appointment: " . $e->getMessage(), 500);
                 }
             } elseif ($subResource === "update") {
@@ -88,10 +88,10 @@ if ($_SESSION["userInfo"]["Type"] === User::STAFF) {
                     }
 
                     $controller->updateRecord($appointment);
-                    AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update appointment", Outcome::SUCCESS);
+                    AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Update appointment", Outcome::SUCCESS);
                     echo json_encode("Appointment updated successfully");
                 } catch (Exception $e) {
-                    AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update appointment", Outcome::ERROR);
+                    AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Update appointment", Outcome::ERROR);
                     throw new Exception("Error updating appointment: " . $e->getMessage(), 500);
                 }
             } elseif ($subResource === "delete") {
@@ -113,10 +113,10 @@ if ($_SESSION["userInfo"]["Type"] === User::STAFF) {
                     $controller = new AppointmentController();
                     $controller->getById((int)$id);
                     $controller->deleteRecord((int)$id);
-                    AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete appointment", Outcome::SUCCESS);
+                    AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Delete appointment", Outcome::SUCCESS);
                     echo json_encode("Appointment deleted successfully");
                 } catch (Exception $e) {
-                    AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete appointment", Outcome::ERROR);
+                    AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Delete appointment", Outcome::ERROR);
                     throw new Exception("Error deleting appointment: " . $e->getMessage(), 500);
                 }
             }

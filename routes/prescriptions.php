@@ -48,7 +48,7 @@ try {
 
                     $prescription = new Prescription(0, $medicine, $dosage);
                     $controller->newRecord($prescription, (int)$doctorId, (int)$diagnosisId);
-                    AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Create prescription", Outcome::SUCCESS);
+                    AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Create prescription", Outcome::SUCCESS);
 
                     if (isset($_FILES["dataFile"])) {
                         try {
@@ -64,14 +64,14 @@ try {
                             }
                             $targetDir .= "/" . strtolower(basename($_FILES["dataFile"]["name"]));
                             if (move_uploaded_file($_FILES["dataFile"]["tmp_name"], $targetDir)) {
-                                AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Upload file", Outcome::SUCCESS);
+                                AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Upload file", Outcome::SUCCESS);
                                 echo json_encode(basename($_FILES["dataFile"]["name"]) . " has been uploaded.");
                             } else {
                                 throw new Exception("Not possible to upload the file.", 500);
                             }
                         } catch (Exception $e) {
                             echo json_encode("Error uploading file: " . $e->getMessage());
-                            AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Upload file", Outcome::ERROR);
+                            AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Upload file", Outcome::ERROR);
                         }
                     }
 
@@ -109,7 +109,7 @@ try {
                     }
                     $controller->updateRecord($existing);
 
-                    AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update prescription", Outcome::SUCCESS);
+                    AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Update prescription", Outcome::SUCCESS);
                     echo json_encode("Prescription updated with success");
                     break;
 
@@ -123,6 +123,6 @@ try {
         throw new Exception("Invalid request method", 405);
     }
 } catch (Exception $e) {
-    AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Prescription management" . $e->getMessage(), Outcome::ERROR);
+    AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Prescription management" . $e->getMessage(), Outcome::ERROR);
     throw new Exception("There was an error managing prescriptions: " . $e->getMessage(), $e->getCode());
 }

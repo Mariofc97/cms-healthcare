@@ -28,10 +28,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         try {
             $controller = new AuthController();
             if ($controller->authUser($email, $password)) {
-                AuditGenerator::genarateLog($email, "Log in", Outcome::SUCCESS);
+                AuditGenerator::generateLog($email, "Log in", Outcome::SUCCESS);
                 echo json_encode("Successfully logged in with id: " . session_id());
             } else {
-                AuditGenerator::genarateLog($email, "Log in", Outcome::ERROR);
+                AuditGenerator::generateLog($email, "Log in", Outcome::ERROR);
                 echo json_encode("Login failed");
                 http_response_code(401);
             }

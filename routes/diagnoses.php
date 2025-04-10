@@ -32,7 +32,7 @@ switch ($method) {
         // Fetch and set prescriptions for the diagnosis based on the diagnosis' ID
         echo json_encode($diagnosis);
       } catch (Exception $e) {
-        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Get Diagnoses", Outcome::ERROR);
+        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Get Diagnoses", Outcome::ERROR);
         throw new Exception("Error getting diagnosis." . $e->getMessage(), 500); //500 Internal Server Error, server error response status code
       }
     } else {
@@ -56,10 +56,10 @@ switch ($method) {
         $newDiagnosis = new Diagnosis(0, $description, $appointmentid); // Create a new Diagnosis instance with the given values (Content.php)
         $controller = new DiagnosisController();
         $controller->newRecord($newDiagnosis);
-        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Adding Diagnosis", outcome::SUCCESS);
+        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Adding Diagnosis", outcome::SUCCESS);
         echo json_encode("Diagnosis added with success");
       } catch (Exception $e) {
-        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Adding Diagnosis", outcome::ERROR);
+        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Adding Diagnosis", outcome::ERROR);
         throw new Exception("Error adding diagnosis" . $e->getMessage(), $e->getCode());
       }
     } else {

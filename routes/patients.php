@@ -58,7 +58,7 @@ switch ($method) {
                         $medicalRecord = new MedicalRecord($patient, $patientConditions);
                         echo json_encode($medicalRecord);
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Get Medical Record", Outcome::ERROR);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Get Medical Record", Outcome::ERROR);
                         throw new Exception("Error getting patient's medical record: " . $e->getMessage(), $e->getCode());
                     }
                 } else {
@@ -84,7 +84,7 @@ switch ($method) {
                             echo json_encode("Patient doesn't have any conditions");
                         }
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Get patient latest condition", Outcome::ERROR);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Get patient latest condition", Outcome::ERROR);
                         throw new Exception("Error getting patient's latest condition: " . $e->getMessage(), $e->getCode());
                     }
                 } else {
@@ -105,10 +105,10 @@ switch ($method) {
                             $detailedAppointments[] = new DetailedAppointment($doctor, $appointment);
                         }
 
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Get Appointments", Outcome::SUCCESS);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Get Appointments", Outcome::SUCCESS);
                         echo json_encode($detailedAppointments);
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Get Appointments", Outcome::ERROR);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Get Appointments", Outcome::ERROR);
                         throw new Exception("Error getting patient appointments: " . $e->getMessage(), $e->getCode());
                     }
                 } else {
@@ -177,10 +177,10 @@ switch ($method) {
                             throw new Exception("Not possible to add patient", 409);
                         }
                         $controller->newRecord($newPatient);
-                        AuditGenerator::genarateLog("root", "Create patient", Outcome::SUCCESS);
+                        AuditGenerator::generateLog("root", "Create patient", Outcome::SUCCESS);
                         echo json_encode("Patient created successfully");
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog("root", "Create patient", Outcome::ERROR);
+                        AuditGenerator::generateLog("root", "Create patient", Outcome::ERROR);
                         throw new Exception("Error creating new patient: " . $e->getMessage(), $e->getCode());
                     }
                 } else {
@@ -238,10 +238,10 @@ switch ($method) {
                         }
 
                         $controller->updateRecord($patient);
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update patient", Outcome::SUCCESS);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Update patient", Outcome::SUCCESS);
                         echo json_encode("Patient updated successfully");
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Update patient", Outcome::ERROR);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Update patient", Outcome::ERROR);
                         throw new Exception("Error updating patient: " . $e->getMessage(), $e->getCode());
                     }
                 } else {
@@ -266,10 +266,10 @@ switch ($method) {
                         $controller = new PatientController();
                         $patient = $controller->getById((int)$id);
                         $controller->deleteRecord((int)$id);
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete patient", Outcome::SUCCESS);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Delete patient", Outcome::SUCCESS);
                         echo json_encode("Patient deleted successfully");
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Delete patient", Outcome::ERROR);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Delete patient", Outcome::ERROR);
                         throw new Exception("Error deleting patient: " . $e->getMessage(), $e->getCode());
                     }
                 } else {
@@ -304,10 +304,10 @@ switch ($method) {
                         $controller = new ConditionController();
                         $condition = new Condition(0, new DateTime(), (int)$patientId, $symptomsArr);
                         $controller->newRecord($condition);
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Create condition", Outcome::SUCCESS);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Create condition", Outcome::SUCCESS);
                         echo json_encode("Condition created successfully");
                     } catch (Exception $e) {
-                        AuditGenerator::genarateLog($_SESSION["userInfo"]["Email"], "Create condition", Outcome::ERROR);
+                        AuditGenerator::generateLog($_SESSION["userInfo"]["Email"], "Create condition", Outcome::ERROR);
                         throw new Exception("Error creating condition: " . $e->getMessage(), $e->getCode());
                     }
                 } else {
