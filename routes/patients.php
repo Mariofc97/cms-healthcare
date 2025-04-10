@@ -129,10 +129,10 @@ switch ($method) {
         switch ($subResource) {
             case "":
                 if ($_SESSION["userInfo"]["Type"] === User::PATIENT || $_SESSION["userInfo"]["Type"] === User::STAFF) {
-                    if (!isset($phone)) {
+                    if (!isset($phone) || empty($phone)) {
                         $phone = "No Phone";
                     }
-                    if (!isset($address)) {
+                    if (!isset($address) || empty($address)) {
                         $address = "No Address";
                     }
 
@@ -169,6 +169,9 @@ switch ($method) {
                         $newPatient = new Patient(0, $lname, $fname, $phone, $email, $pass, $gender, $birthdate, $address);
 
                         $controller = new PatientController();
+                        if ($controller->patientExistsByEmail($email)) {
+                            throw new Exception("Not possible to add patient", 409);
+                        }
                         $controller->newRecord($newPatient);
                         AuditGenerator::genarateLog("root", "Create patient", Outcome::SUCCESS);
                         echo json_encode("Patient created successfully");

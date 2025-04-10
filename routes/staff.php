@@ -84,13 +84,16 @@ if ($_SESSION["userInfo"]["Type"] === User::STAFF) {
         }
         $fname = htmlspecialchars(strip_tags($_POST["fname"])) ?? null; // Sanitize and assign it to $fname
         $lname = htmlspecialchars(strip_tags($_POST["lname"])) ?? null;
-        $phone = htmlspecialchars(strip_tags($_POST["phone"])) ?? null;
+        $phone = htmlspecialchars(strip_tags($_POST["phone"])) ?? "No Phone";
         $email = htmlspecialchars(strip_tags($_POST["email"])) ?? null;
         $password = password_hash(strip_tags($_POST["pass"]), PASSWORD_ARGON2I, ['cost' => 10]) ?? null; //Sanitize and convert the password into a hashed value
 
         $newStaff = new Staff(0, $fname, $lname, $phone, $email, $password, User::STAFF);
         try {
           $controller = new StaffController();
+          if ($controller->staffExistsByEmail($email)) {
+            throw new Exception("Not possible to add staff", 409); // Staff already exists with email
+          }
           $controller->newRecord($newStaff);
           AuditGenerator::genarateLog("root", "Add New Staff", outcome::SUCCESS);
         } catch (Exception $e) {

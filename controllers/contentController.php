@@ -187,6 +187,22 @@ class PatientController extends ApplicationController
             );
         } else throw new Exception("Condition not found with ID $conditionId", 404);
     }
+
+    public function patientExistsByEmail(string $email): bool
+    {
+        $sql = "SELECT * FROM user_tb WHERE Email = ? AND Type = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $type = User::PATIENT;
+        $stmt->bind_param("si", $email, $type);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Failed to check patient existence: " . $this->dbConnection->error);
+        }
+
+        $result = $stmt->get_result();
+        $stmt->close();
+        return ($result->num_rows > 0);
+    }
 }
 
 class DoctorController extends ApplicationController
@@ -397,6 +413,22 @@ class StaffController extends ApplicationController
         }
         $stmt->close();
         return true;
+    }
+
+    public function staffExistsByEmail(string $email): bool
+    {
+        $sql = "SELECT * FROM user_tb WHERE email = ? AND Type = ?";
+        $stmt = $this->dbConnection->prepare($sql);
+        $type = User::STAFF;
+        $stmt->bind_param("si", $email, $type);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Failed to check staff existence: " . $this->dbConnection->error);
+        }
+
+        $result = $stmt->get_result();
+        $stmt->close();
+        return ($result->num_rows > 0);
     }
 }
 
