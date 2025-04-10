@@ -7,9 +7,7 @@ namespace models;
 use DateTime;
 use JsonSerializable;
 
-interface AppItem {};
-
-class User implements AppItem
+class User
 {
     protected int $id;
     protected string $fname;

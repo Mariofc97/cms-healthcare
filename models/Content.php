@@ -10,7 +10,7 @@ require_once __DIR__ . "/../controllers/contentController.php";
 use DateTime;
 use JsonSerializable;
 
-class Appointment implements AppItem, JsonSerializable
+class Appointment implements JsonSerializable
 {
     private int $id;
     private DateTime $datetime;
@@ -87,7 +87,7 @@ class Appointment implements AppItem, JsonSerializable
     }
 }
 
-class Condition implements AppItem, JsonSerializable
+class Condition implements JsonSerializable
 {
     private int $id;
     private DateTime $startDate;
@@ -165,7 +165,7 @@ class Condition implements AppItem, JsonSerializable
     }
 }
 
-class Diagnosis implements AppItem, JsonSerializable
+class Diagnosis implements JsonSerializable
 {
     private int $id;
     private string $description;
@@ -231,7 +231,7 @@ class Diagnosis implements AppItem, JsonSerializable
 }
 
 
-class Prescription implements AppItem
+class Prescription
 {
     private int $id;
     private string $medicine;
@@ -275,7 +275,7 @@ class Prescription implements AppItem
     }
 }
 
-class Symptom implements AppItem, JsonSerializable
+class Symptom implements JsonSerializable
 {
     private int $condition;
     private string $symptom;
@@ -314,7 +314,7 @@ class Symptom implements AppItem, JsonSerializable
     }
 }
 
-class MedicalRecord implements AppItem, JsonSerializable
+class MedicalRecord implements JsonSerializable
 {
     private Patient $patient;
     private array $conditions;
@@ -354,7 +354,7 @@ class MedicalRecord implements AppItem, JsonSerializable
     }
 }
 
-class DetailedAppointment implements AppItem, JsonSerializable
+class DetailedAppointment implements JsonSerializable
 {
     private Doctor $doctor;
     private Appointment $appointment;

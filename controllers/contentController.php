@@ -1,6 +1,5 @@
 <?php
 
-use models\AppItem;
 use models\Appointment;
 use models\Condition;
 use models\Gender;
